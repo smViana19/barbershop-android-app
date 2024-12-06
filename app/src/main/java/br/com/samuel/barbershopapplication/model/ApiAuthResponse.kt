@@ -2,7 +2,7 @@ package br.com.samuel.barbershopapplication.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ApiUserResponse(
+data class ApiAuthResponse(
     @SerializedName("id")
     val id: Int,
     @SerializedName("name")
@@ -10,5 +10,8 @@ data class ApiUserResponse(
     @SerializedName("email")
     var email: String,
     @SerializedName("role")
-    var role: String
+    var role: String,
+    @SerializedName("token")
+    var token: String
+
 )
