@@ -1,17 +1,22 @@
 package br.com.samuel.barbershopapplication.di
 
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAuthService
+import br.com.samuel.barbershopapplication.backendservices.api.ApiAvailabilityService
+import br.com.samuel.barbershopapplication.backendservices.api.ApiProfessionalService
+import br.com.samuel.barbershopapplication.backendservices.api.ApiServiceService
+import br.com.samuel.barbershopapplication.backendservices.api.ApiSpecialtyService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiUserService
 import br.com.samuel.barbershopapplication.constants.APP_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
-@InstallIn
+@InstallIn(SingletonComponent::class)
 object ApplicationModule {
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
@@ -36,6 +41,26 @@ object ApplicationModule {
     @Provides
     fun provideAuthApiService(retrofit: Retrofit): ApiAuthService {
         return retrofit.create(ApiAuthService::class.java)
+    }
+
+    @Provides
+    fun provideProfessionalApiService(retrofit: Retrofit): ApiProfessionalService {
+        return retrofit.create(ApiProfessionalService::class.java)
+    }
+
+    @Provides
+    fun provideSpecialtyApiService(retrofit: Retrofit): ApiSpecialtyService {
+        return retrofit.create(ApiSpecialtyService::class.java)
+    }
+
+    @Provides
+    fun provideServiceService(retrofit: Retrofit): ApiServiceService {
+        return retrofit.create(ApiServiceService::class.java)
+    }
+
+    @Provides
+    fun provideAvailabilityService(retrofit: Retrofit): ApiAvailabilityService {
+        return retrofit.create(ApiAvailabilityService::class.java)
     }
 
 
