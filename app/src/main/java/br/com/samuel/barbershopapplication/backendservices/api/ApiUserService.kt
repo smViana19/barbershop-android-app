@@ -2,6 +2,7 @@ package br.com.samuel.barbershopapplication.backendservices.api
 
 import br.com.samuel.barbershopapplication.model.ApiUserRequest
 import br.com.samuel.barbershopapplication.model.ApiUserResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -11,7 +12,7 @@ import retrofit2.http.Path
 
 interface ApiUserService {
     @POST("/users/")
-    suspend fun createUser(@Body apiUserRequest: ApiUserRequest): ApiUserResponse
+    suspend fun createUser(@Body apiUserRequest: ApiUserRequest): Response<ApiUserResponse>
 
     @GET("/users")
     suspend fun getAllUsers(): List<ApiUserResponse>
