@@ -10,5 +10,5 @@ data class ApiUserResponse(
     @SerializedName("email")
     var email: String,
     @SerializedName("role")
-    var role: String
+    var role: String,
 )
