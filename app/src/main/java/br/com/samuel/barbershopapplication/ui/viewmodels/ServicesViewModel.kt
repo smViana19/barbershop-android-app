@@ -24,8 +24,6 @@ class ServicesViewModel @Inject constructor(
             try {
                 val response = apiServiceService.getAllServices()
                 _serviceData.value = response
-                println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-                println(response)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
