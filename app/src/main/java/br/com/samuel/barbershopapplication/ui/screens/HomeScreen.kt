@@ -1,9 +1,6 @@
 package br.com.samuel.barbershopapplication.ui.screens
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,18 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
@@ -33,20 +25,26 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import br.com.samuel.barbershopapplication.R
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAuthServiceMock
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiServiceServiceMock
+import br.com.samuel.barbershopapplication.model.ApiServiceResponse
+import br.com.samuel.barbershopapplication.ui.viewmodels.ServicesViewModel
+import br.com.samuel.barbershopapplication.utils.formatCurrency
 
 
 @Composable
 fun HomeScreen(
+    serviceViewmodel: ServicesViewModel = hiltViewModel()
 ) {
-    var text by remember { mutableStateOf("") }
+    val servicesData = serviceViewmodel.serviceData
     val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -101,7 +99,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.padding(top = 16.dp))
         Column(modifier = Modifier.padding()) {
             when (selectedTabIndex) {
-                0 -> ServicesTab()
+                0 -> ServicesTab(services = servicesData.value)
                 1 -> ProfessionalsTab()
                 2 -> SpecialtiesTab()
             }
@@ -111,9 +109,9 @@ fun HomeScreen(
 }
 
 @Composable
-fun ServicesTab(modifier: Modifier = Modifier) {
+fun ServicesTab(services: List<ApiServiceResponse>) {
     Row(
-        modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center
@@ -138,7 +136,7 @@ fun ServicesTab(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        items(10) { index ->
+        items(services) { service ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,8 +149,8 @@ fun ServicesTab(modifier: Modifier = Modifier) {
                     ) {
                         Text(
                             modifier = Modifier,
-                            text = "Titulo Serviço",
-                            fontSize = 24.sp
+                            text = service.name,
+                            fontSize = 16.sp,
                         )
                     }
                     Row(
@@ -163,7 +161,7 @@ fun ServicesTab(modifier: Modifier = Modifier) {
                     ) {
                         Text(
                             modifier = Modifier.padding(end = 8.dp),
-                            text = "R$35,00",
+                            text = "R$ ${service.price.formatCurrency()}",
                             fontSize = 14.sp
                         )
                         Row(
@@ -171,7 +169,9 @@ fun ServicesTab(modifier: Modifier = Modifier) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(16.dp).padding(end = 4.dp),
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .padding(end = 4.dp),
                                 painter = painterResource(R.drawable.ic_time_24),
                                 contentDescription = "time")
                             Text(
@@ -189,6 +189,7 @@ fun ServicesTab(modifier: Modifier = Modifier) {
                         Button(
                             modifier = Modifier,
                             shape = RoundedCornerShape(4.dp),
+                            contentPadding = PaddingValues(4.dp),
                             onClick = {}) {
                             Text(
                                 text = "Agendar",
@@ -247,5 +248,7 @@ fun SpecialtiesTab(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen()
+    val apiServiceServiceMock = ApiServiceServiceMock()
+    val serviceViewmodel = ServicesViewModel(apiServiceServiceMock)
+    HomeScreen(serviceViewmodel)
 }
