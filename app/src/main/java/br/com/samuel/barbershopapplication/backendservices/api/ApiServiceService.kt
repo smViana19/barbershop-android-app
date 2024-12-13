@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface ApiServiceService {
     @GET("/services")
-    suspend fun getAllServices(): ApiServiceResponse
+    suspend fun getAllServices(): List<ApiServiceResponse>
 
     @GET("/services/{serviceId}")
     suspend fun getServiceById(@Path("serviceId") serviceId: Int): List<ApiServiceResponse>
