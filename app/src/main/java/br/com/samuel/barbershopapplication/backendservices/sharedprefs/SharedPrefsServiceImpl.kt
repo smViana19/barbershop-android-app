@@ -11,10 +11,20 @@ class SharedPrefsServiceImpl(context: Context) : SharedPrefsService{
         password: String,
         role: String
     ) {
-        TODO("Not yet implemented")
+        sharedPreferences.edit().apply {
+            putString("user_name", name)
+            putString("user_email", email)
+            putString("user_password", password)
+            putString("user_role", role)
+            apply()
+        }
     }
 
     override fun getUserData(): ApiUserRequest {
-        TODO("Not yet implemented")
+        val name = sharedPreferences.getString("user_name", "") ?: ""
+        val email = sharedPreferences.getString("user_email", "") ?: ""
+        val password = sharedPreferences.getString("user_password", "") ?: ""
+        val role = sharedPreferences.getString("user_role", "") ?: ""
+        return ApiUserRequest(name, email, password)
     }
 }
