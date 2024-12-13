@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -38,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import br.com.samuel.barbershopapplication.backendservices.api.ApiUserService
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiUserServiceMock
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.RegisterViewModel
@@ -98,6 +98,10 @@ fun RegisterScreen(
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
                 label = { Text("Nome completo") }
             )
             OutlinedTextField(
@@ -108,7 +112,11 @@ fun RegisterScreen(
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+
+                ),
                 label = { Text("Email") }
             )
             OutlinedTextField(
@@ -119,7 +127,10 @@ fun RegisterScreen(
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Send
+                ),
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
@@ -141,10 +152,10 @@ fun RegisterScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
-                
+
             ) {
                 Text(
-                    text =registerViewModel.error.value,
+                    text = registerViewModel.error.value,
                     color = Color(0xFFFF0000)
                 )
             }
@@ -174,8 +185,8 @@ fun RegisterScreen(
                     fontSize = 12.sp
                 )
                 Text(
-                    modifier = Modifier.clickable{
-                        print("Login Navigation")
+                    modifier = Modifier.clickable {
+                        println("Login Navigation")
                     },
                     text = "Entrar",
                     color = MaterialTheme.colorScheme.primary,
@@ -190,8 +201,8 @@ fun RegisterScreen(
 @Composable
 private fun RegisterScreenPreview() {
     val apiUserServiceMock = ApiUserServiceMock()
-    val registerViewModelMock = RegisterViewModel(apiUserServiceMock)
+    val registerViewModel = RegisterViewModel(apiUserServiceMock)
     BarbershopApplicationTheme {
-        RegisterScreen(registerViewModelMock)
+        RegisterScreen(registerViewModel)
     }
 }
