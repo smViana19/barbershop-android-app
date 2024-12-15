@@ -13,7 +13,7 @@ interface ApiAvailabilityService {
     suspend fun getAvailabilityById(): List<ApiAvailabilityResponse>
 
     @GET("/availabilities/professional/{professionalId}")
-    suspend fun getAvailabiltiesByProfessionalId(@Path("professionalId") professionalId: Int): List<ApiAvailabilityResponse>
+    suspend fun getAvailabilitiesByProfessionalId(@Path("professionalId") professionalId: Int): List<ApiAvailabilityResponse>
 
     //TODO: ADICIONAR OS OUTROS METODOS DEPOIS QUE TERMINAR NO BACK END CORRETAMENTE
 }
