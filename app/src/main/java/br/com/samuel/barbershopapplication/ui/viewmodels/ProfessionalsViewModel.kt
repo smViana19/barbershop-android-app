@@ -24,7 +24,6 @@ class ProfessionalsViewModel @Inject constructor(
             try {
                 val response = apiProfessionalService.getAllProfessionals()
                 _professionals.value = response
-                println("response: ${response}")
                 for (res in response) {
                     println(res.user.name)
                 }

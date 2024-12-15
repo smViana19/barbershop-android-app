@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import br.com.samuel.barbershopapplication.R
+import br.com.samuel.barbershopapplication.backendservices.api.ApiProfessionalService
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiProfessionalServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiServiceServiceMock
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
@@ -310,5 +312,7 @@ fun SpecialtiesTab(modifier: Modifier = Modifier) {
 private fun HomeScreenPreview() {
     val apiServiceServiceMock = ApiServiceServiceMock()
     val serviceViewmodel = ServicesViewModel(apiServiceServiceMock)
-    HomeScreen(serviceViewmodel)
+    val apiProfessionalServiceMock = ApiProfessionalServiceMock()
+    val professionalsViewmodel = ProfessionalsViewModel(apiProfessionalServiceMock)
+    HomeScreen(serviceViewmodel, professionalsViewmodel)
 }
