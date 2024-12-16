@@ -31,31 +31,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import br.com.samuel.barbershopapplication.R
-import br.com.samuel.barbershopapplication.backendservices.api.ApiProfessionalService
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiProfessionalServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiServiceServiceMock
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiSpecialtyServiceMock
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
-import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalsViewModel
+import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
+import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ServicesViewModel
+import br.com.samuel.barbershopapplication.ui.viewmodels.SpecialtyViewModel
 import br.com.samuel.barbershopapplication.utils.formatCurrency
-import java.util.Locale
 
 @Composable
 fun HomeScreen(
     serviceViewmodel: ServicesViewModel = hiltViewModel(),
-    professionalsViewmodel: ProfessionalsViewModel = hiltViewModel()
+    professionalViewmodel: ProfessionalViewModel = hiltViewModel(),
+    specialtyViewModel: SpecialtyViewModel = hiltViewModel()
 ) {
     val servicesData = serviceViewmodel.serviceData
-    val professionals = professionalsViewmodel.professionals
+    val professionals = professionalViewmodel.professionals
+    val specialties = specialtyViewModel.specialties
     val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
-    var selectedTabIndex by remember { mutableIntStateOf(1) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(selectedTabIndex) {
+        when(selectedTabIndex) {
+            0 -> serviceViewmodel.getAllServices()
+            1 -> professionalViewmodel.getAllProfessionals()
+            2 -> specialtyViewModel.getAllSpecialties()
+        }
+    }
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -74,7 +85,7 @@ fun HomeScreen(
                 )
             }
             Text(
-                text = "AgendaPlus",
+                text = "BarberShop",
             )
             IconButton(onClick = {/*TODO TELA DE MAPA*/ }) {
                 Icon(
@@ -110,7 +121,7 @@ fun HomeScreen(
             when (selectedTabIndex) {
                 0 -> ServicesTab(services = servicesData.value)
                 1 -> ProfessionalsTab(professionals = professionals.value)
-                2 -> SpecialtiesTab()
+                2 -> SpecialtiesTab(specialties = specialties.value)
             }
         }
 
@@ -119,6 +130,7 @@ fun HomeScreen(
 
 @Composable
 fun ServicesTab(services: List<ApiServiceResponse>) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,67 +254,188 @@ fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
     }
     Spacer(modifier = Modifier.padding(8.dp))
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(professionals) { professional ->
+    if (professionals.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 24.dp),
+        ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .background(Color.Gray)
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 4.dp),
-                            text = professional.user.name.lowercase()
-                        )
-                    }
+                Text(
+                    text = "Nenhum item para exibir",
+                    fontSize = 16.sp
+                )
+            }
+        }
 
-                }
-                Column(
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(professionals) { professional ->
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
-                        Button(
-                            modifier = Modifier,
-                            shape = RoundedCornerShape(4.dp),
-                            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
-                            onClick = {}) {
-                            Text(
-                                text = "Ver mais",
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Gray)
                             )
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 4.dp),
+                                text = professional.user.name.lowercase()
+                            )
+                        }
+
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Button(
+                                modifier = Modifier,
+                                shape = RoundedCornerShape(4.dp),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                                onClick = {}) {
+                                Text(
+                                    text = "Ver mais",
+                                )
+                            }
                         }
                     }
                 }
+                HorizontalDivider()
             }
-            HorizontalDivider()
         }
     }
+
+
 }
 
 @Composable
-fun SpecialtiesTab(modifier: Modifier = Modifier) {
+fun SpecialtiesTab(specialties: List<ApiSpecialtyResponse>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = "",
+            onValueChange = {},
+            label = { Text(text = "Pesquisar") },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_search_24),
+                    contentDescription = "Search"
+                )
+            },
+            trailingIcon = {},
+        )
+    }
+    Spacer(modifier = Modifier.padding(8.dp))
+    if (specialties.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 24.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Nenhum item para exibir",
+                    fontSize = 16.sp
+                )
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(specialties) { specialty ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Gray)
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 4.dp),
+                                text = specialty.name
+                            )
+                        }
+                        Row {
+                            Text(text = specialty.description)
+                        }
+
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Button(
+                                modifier = Modifier,
+                                shape = RoundedCornerShape(4.dp),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                                onClick = {}) {
+                                Text(
+                                    text = "Ver mais",
+                                )
+                            }
+                        }
+                    }
+                }
+                HorizontalDivider()
+
+            }
+        }
+    }
     Text("Teste especialidades")
 
 }
@@ -312,7 +445,12 @@ fun SpecialtiesTab(modifier: Modifier = Modifier) {
 private fun HomeScreenPreview() {
     val apiServiceServiceMock = ApiServiceServiceMock()
     val serviceViewmodel = ServicesViewModel(apiServiceServiceMock)
+
     val apiProfessionalServiceMock = ApiProfessionalServiceMock()
-    val professionalsViewmodel = ProfessionalsViewModel(apiProfessionalServiceMock)
-    HomeScreen(serviceViewmodel, professionalsViewmodel)
+    val professionalViewmodel = ProfessionalViewModel(apiProfessionalServiceMock)
+
+    val apiSpecialtyServiceMock = ApiSpecialtyServiceMock()
+    val specialtyViewModel = SpecialtyViewModel(apiSpecialtyServiceMock)
+
+    HomeScreen(serviceViewmodel, professionalViewmodel, specialtyViewModel)
 }
