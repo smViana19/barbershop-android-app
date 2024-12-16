@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfessionalsViewModel @Inject constructor(
+class ProfessionalViewModel @Inject constructor(
     private val apiProfessionalService: ApiProfessionalService
 ) : ViewModel() {
     init {
@@ -28,6 +28,8 @@ class ProfessionalsViewModel @Inject constructor(
                     println(res.user.name)
                 }
                 println("_professionals: $_professionals")
+                println("to tao solteiro profissional")
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
