@@ -14,9 +14,7 @@ import javax.inject.Inject
 class ServicesViewModel @Inject constructor(
     private val apiServiceService: ApiServiceService
 ) : ViewModel() {
-//    init {
-//        getAllServices()
-//    }
+
     private val _serviceData = mutableStateOf<List<ApiServiceResponse>>(emptyList())
     val serviceData: MutableState<List<ApiServiceResponse>> = _serviceData
     fun getAllServices() {

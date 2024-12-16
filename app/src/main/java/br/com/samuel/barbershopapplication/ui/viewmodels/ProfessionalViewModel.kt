@@ -14,9 +14,7 @@ import javax.inject.Inject
 class ProfessionalViewModel @Inject constructor(
     private val apiProfessionalService: ApiProfessionalService
 ) : ViewModel() {
-    init {
-        getAllProfessionals()
-    }
+
     private val _professionals = mutableStateOf<List<ApiProfessionalResponse>>(emptyList())
     val professionals: MutableState<List<ApiProfessionalResponse>> = _professionals
     fun getAllProfessionals() {

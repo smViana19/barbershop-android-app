@@ -14,9 +14,6 @@ import javax.inject.Inject
 class SpecialtyViewModel @Inject constructor(
     private val apiSpecialtyService: ApiSpecialtyService
 ) : ViewModel() {
-    init {
-        getAllSpecialties()
-    }
 
     private val _specialties = mutableStateOf<List<ApiSpecialtyResponse>>(emptyList())
     val specialties: MutableState<List<ApiSpecialtyResponse>> = _specialties
@@ -25,7 +22,6 @@ class SpecialtyViewModel @Inject constructor(
             try {
                 val response = apiSpecialtyService.getAllSpecialties()
                 _specialties.value = response
-                println("to tao solteiro specialty")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
