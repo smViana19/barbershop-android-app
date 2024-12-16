@@ -1,11 +1,15 @@
 package br.com.samuel.barbershopapplication.ui.viewmodels
 
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import br.com.samuel.barbershopapplication.backendservices.api.ApiUserService
 import br.com.samuel.barbershopapplication.model.ApiUserRequest
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -26,7 +30,7 @@ class RegisterViewModel @Inject constructor(
 
     //TODO: AJUSTAR PARA QUE PEGUE O ESTADO AUTO NO INPUT FUTURAMENTE
 
-    fun onClickRegisterButton() {
+    fun onClickRegisterButton(navController: NavController) {
         viewModelScope.launch {
 
             if(name.value.isBlank() || name.value.isEmpty()) {
@@ -47,8 +51,7 @@ class RegisterViewModel @Inject constructor(
                 val response = apiUserService.createUser(apiUserRequest)
                 when (response.code()) {
                     201 -> {
-                        val userData = response.body()
-                        println("Criado com sucesso $userData")
+                        navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
                     }
                     400 -> {
                         val errorMessage = response.errorBody()?.string()
@@ -66,5 +69,7 @@ class RegisterViewModel @Inject constructor(
         }
 
     }
-
+    fun onClickNavigationLoginScreen(navController: NavController) {
+        navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
+    }
 }

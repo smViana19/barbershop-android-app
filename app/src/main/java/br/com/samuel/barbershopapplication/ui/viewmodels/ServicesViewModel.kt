@@ -22,7 +22,6 @@ class ServicesViewModel @Inject constructor(
             try {
                 val response = apiServiceService.getAllServices()
                 _serviceData.value = response
-                println("to tao solteiro")
             } catch (e: Exception) {
                 e.printStackTrace()
             }

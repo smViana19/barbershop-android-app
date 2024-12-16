@@ -39,13 +39,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiUserServiceMock
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.RegisterViewModel
 
 @Composable
 fun RegisterScreen(
-    registerViewModel: RegisterViewModel = hiltViewModel()
+    registerViewModel: RegisterViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -129,7 +132,7 @@ fun RegisterScreen(
                     .fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Send
+                    imeAction = ImeAction.Done
                 ),
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -163,7 +166,7 @@ fun RegisterScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
-                    registerViewModel.onClickRegisterButton()
+                    registerViewModel.onClickRegisterButton(navController)
                 },
                 shape = RoundedCornerShape(4.dp),
                 colors = ButtonColors(
@@ -186,7 +189,7 @@ fun RegisterScreen(
                 )
                 Text(
                     modifier = Modifier.clickable {
-                        println("Login Navigation")
+                        registerViewModel.onClickNavigationLoginScreen(navController)
                     },
                     text = "Entrar",
                     color = MaterialTheme.colorScheme.primary,
@@ -202,7 +205,8 @@ fun RegisterScreen(
 private fun RegisterScreenPreview() {
     val apiUserServiceMock = ApiUserServiceMock()
     val registerViewModel = RegisterViewModel(apiUserServiceMock)
+    val navController = rememberNavController()
     BarbershopApplicationTheme {
-        RegisterScreen(registerViewModel)
+        RegisterScreen(registerViewModel, navController)
     }
 }
