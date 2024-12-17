@@ -47,166 +47,166 @@ import br.com.samuel.barbershopapplication.ui.viewmodels.RegisterViewModel
 
 @Composable
 fun RegisterScreen(
-    registerViewModel: RegisterViewModel = hiltViewModel(),
-    navController: NavController
+  registerViewModel: RegisterViewModel = hiltViewModel(),
+  navController: NavController
 ) {
-    var isPasswordVisible by remember { mutableStateOf(false) }
+  var isPasswordVisible by remember { mutableStateOf(false) }
 
-    val focusManager = LocalFocusManager.current
+  val focusManager = LocalFocusManager.current
 
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                })
-            },
-        horizontalAlignment = Alignment.CenterHorizontally
+  Column(
+    modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+        .pointerInput(Unit) {
+            detectTapGestures(onTap = {
+                focusManager.clearFocus()
+            })
+        },
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Row(
+      modifier = Modifier
+        .fillMaxWidth(),
+      horizontalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Cadastre-se",
-                fontSize = 32.sp,
-                //TODO COLOR PICKER PATTERN
-            )
+      Text(
+        text = "Cadastre-se",
+        fontSize = 32.sp,
+        //TODO COLOR PICKER PATTERN
+      )
 
-        }
-        Column {
-            Image(
-                painter = painterResource(R.drawable.img_barbershop_register),
-                contentDescription = "Imagem barbeiro registro"
-            )
-        }
-        Spacer(
-            modifier = Modifier
-                .padding(16.dp)
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            OutlinedTextField(
-                value = registerViewModel.name.value,
-                onValueChange = { newValue ->
-                    registerViewModel.name.value = newValue
-                },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                label = { Text("Nome completo") }
-            )
-            OutlinedTextField(
-                value = registerViewModel.email.value,
-                onValueChange = { newValue ->
-                    registerViewModel.email.value = newValue
-                },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-
-                ),
-                label = { Text("Email") }
-            )
-            OutlinedTextField(
-                value = registerViewModel.password.value,
-                onValueChange = { newValue ->
-                    registerViewModel.password.value = newValue
-                },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                        val image = if (isPasswordVisible) {
-                            R.drawable.ic_visibility_off_24
-                        } else {
-                            R.drawable.ic_visibility_on_24
-                        }
-
-                        Icon(
-                            painter = painterResource(image),
-                            contentDescription = if (isPasswordVisible) "Ocultar senha" else "Mostrar senha"
-                        )
-                    }
-                },
-                label = { Text("Senha") }
-            )
-            Spacer(modifier = Modifier.padding(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-
-            ) {
-                Text(
-                    text = registerViewModel.error.value,
-                    color = Color(0xFFFF0000)
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = {
-                    registerViewModel.onClickRegisterButton(navController)
-                },
-                shape = RoundedCornerShape(4.dp),
-                colors = ButtonColors(
-                    containerColor = Color(0xFF1E90FF),
-                    contentColor = Color(0xFFFFFFFF),
-                    disabledContainerColor = Color(0xFF007BFF),
-                    disabledContentColor = Color(0xFFFFFFFF)
-                )
-            ) {
-                Text(text = "Cadastrar")
-            }
-            Spacer(modifier = Modifier.padding(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Já possui cadastro?",
-                    fontSize = 12.sp
-                )
-                Text(
-                    modifier = Modifier.clickable {
-                        registerViewModel.onClickNavigationLoginScreen(navController)
-                    },
-                    text = "Entrar",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 12.sp
-                )
-            }
-        }
     }
+    Column {
+      Image(
+        painter = painterResource(R.drawable.img_barbershop_register),
+        contentDescription = "Imagem barbeiro registro"
+      )
+    }
+    Spacer(
+      modifier = Modifier
+        .padding(16.dp)
+    )
+    Column(
+      modifier = Modifier
+          .fillMaxWidth()
+          .weight(1f)
+    ) {
+      OutlinedTextField(
+        value = registerViewModel.name.value,
+        onValueChange = { newValue ->
+          registerViewModel.name.value = newValue
+        },
+        singleLine = true,
+        modifier = Modifier
+          .fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(
+          keyboardType = KeyboardType.Text,
+          imeAction = ImeAction.Next
+        ),
+        label = { Text("Nome completo") }
+      )
+      OutlinedTextField(
+        value = registerViewModel.email.value,
+        onValueChange = { newValue ->
+          registerViewModel.email.value = newValue
+        },
+        singleLine = true,
+        modifier = Modifier
+          .fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(
+          keyboardType = KeyboardType.Email,
+          imeAction = ImeAction.Next
+
+        ),
+        label = { Text("Email") }
+      )
+      OutlinedTextField(
+        value = registerViewModel.password.value,
+        onValueChange = { newValue ->
+          registerViewModel.password.value = newValue
+        },
+        singleLine = true,
+        modifier = Modifier
+          .fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(
+          keyboardType = KeyboardType.Password,
+          imeAction = ImeAction.Done
+        ),
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+          IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+            val image = if (isPasswordVisible) {
+              R.drawable.ic_visibility_off_24
+            } else {
+              R.drawable.ic_visibility_on_24
+            }
+
+            Icon(
+              painter = painterResource(image),
+              contentDescription = if (isPasswordVisible) "Ocultar senha" else "Mostrar senha"
+            )
+          }
+        },
+        label = { Text("Senha") }
+      )
+      Spacer(modifier = Modifier.padding(16.dp))
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+
+      ) {
+        Text(
+          text = registerViewModel.error.value,
+          color = Color(0xFFFF0000)
+        )
+      }
+      Button(
+        modifier = Modifier
+          .fillMaxWidth(),
+        onClick = {
+          registerViewModel.onClickRegisterButton(navController)
+        },
+        shape = RoundedCornerShape(4.dp),
+        colors = ButtonColors(
+          containerColor = Color(0xFF1E90FF),
+          contentColor = Color(0xFFFFFFFF),
+          disabledContainerColor = Color(0xFF007BFF),
+          disabledContentColor = Color(0xFFFFFFFF)
+        )
+      ) {
+        Text(text = "Cadastrar")
+      }
+      Spacer(modifier = Modifier.padding(8.dp))
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+      ) {
+        Text(
+          text = "Já possui cadastro?",
+          fontSize = 12.sp
+        )
+        Text(
+          modifier = Modifier.clickable {
+            registerViewModel.onClickNavigationLoginScreen(navController)
+          },
+          text = "Entrar",
+          color = MaterialTheme.colorScheme.primary,
+          fontSize = 12.sp
+        )
+      }
+    }
+  }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun RegisterScreenPreview() {
-    val apiUserServiceMock = ApiUserServiceMock()
-    val registerViewModel = RegisterViewModel(apiUserServiceMock)
-    val navController = rememberNavController()
-    BarbershopApplicationTheme {
-        RegisterScreen(registerViewModel, navController)
-    }
+  val apiUserServiceMock = ApiUserServiceMock()
+  val registerViewModel = RegisterViewModel(apiUserServiceMock)
+  val navController = rememberNavController()
+  BarbershopApplicationTheme {
+    RegisterScreen(registerViewModel, navController)
+  }
 }
