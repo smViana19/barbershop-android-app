@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    //calendar
+    implementation("com.kizitonwose.calendar:compose:2.6.0")
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson.convertor)
