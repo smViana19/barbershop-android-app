@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
+import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -102,6 +103,33 @@ fun Day(day: WeekDay, selectedDate: LocalDate?, onClick: (LocalDate) -> Unit) {
     )
   }
 }
+@Composable
+fun DayMonth(day: CalendarDay, onClick: (CalendarDay) -> Unit) {
+  Box(
+    modifier = Modifier
+      .aspectRatio(1f)
+      .padding(8.dp),
+//      .background(
+//        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+//        shape = CircleShape,
+//      )
+//      .clickable(
+//        interactionSource = interactionSource,
+//        indication = null,
+//      ) {
+//        onClick(day.date)
+//      },
+    contentAlignment = Alignment.Center
+  ) {
+    Text(
+      fontSize = 16.sp,
+      text = day.date.dayOfMonth.toString(),
+      textAlign = TextAlign.Center,
+    )
+  }
+}
+
+
 
 @Composable
 fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
@@ -110,6 +138,7 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
       Text(
         modifier = Modifier.weight(1f),
         textAlign = TextAlign.Center,
+        color = Color.Gray,
         text = dayOfWeek.getDisplayName(
           TextStyle.SHORT,
           Locale("pt", "BR")
