@@ -5,10 +5,10 @@ import br.com.samuel.barbershopapplication.backendservices.api.ApiAppointmentSer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-@HiltViewModel
-class AppointmentViewModel @Inject constructor(
-  private val apiAppointmentService: ApiAppointmentService
-) : ViewModel() {
-
-  fun getAppointmentByUserId() {}
-}
+//@HiltViewModel
+//class AppointmentViewModel @Inject constructor(
+//  private val apiAppointmentService: ApiAppointmentService
+//) : ViewModel() {
+//
+//  fun getAppointmentByUserId() {}
+//}
