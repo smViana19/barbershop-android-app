@@ -292,6 +292,7 @@ fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
+                                //TODO: COLOCAR A IMAGEM DO PROFISSIONAL
                                 modifier = Modifier
                                     .size(50.dp)
                                     .clip(CircleShape)
