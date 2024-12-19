@@ -1,6 +1,7 @@
 package br.com.samuel.barbershopapplication.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -29,12 +32,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import br.com.samuel.barbershopapplication.R
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAvailabilityServiceMock
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiProfessionalServiceMock
+import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
+import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.viewmodels.AvailabilityViewModel
+import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -45,7 +56,12 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun AppointmentScreen() {
+fun AppointmentScreen(
+  availabilityViewModel: AvailabilityViewModel = hiltViewModel(),
+  professionalViewModel: ProfessionalViewModel = hiltViewModel()
+) {
+  val professionals = professionalViewModel.professionals
+  val availableTime = availabilityViewModel.availabilities
   val currentDate = remember { LocalDate.now() }
   val currentMonth = remember { YearMonth.now() }
   val startDate = remember { currentMonth.minusMonths(1).atStartOfMonth() }
@@ -63,7 +79,12 @@ fun AppointmentScreen() {
     YearMonth.from(state.firstVisibleWeek.days.first().date)
   }
 
-  Column (
+  LaunchedEffect(Unit) {
+    professionalViewModel.getAllProfessionals()
+
+  }
+
+  Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier
       .fillMaxSize()
@@ -105,39 +126,78 @@ fun AppointmentScreen() {
           fontSize = 18.sp,
         )
       }
-      LazyRow(
-        modifier = Modifier.padding(2.dp),
-        contentPadding = PaddingValues(4.dp)
-      ) {
-        items(3) { professional ->
-          Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
-          ) {
-            Box(
-              //TODO: COLOCAR A IMAGEM DO PROFISSIONAL
-              modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-            )
-            Text(
-              modifier = Modifier.padding(horizontal = 4.dp),
-              text = "Profissional",
-              fontSize = 12.sp
-            )
-          }
+      ProfessionalList(
+        professionals = professionals.value,
+        onClick = { professionalId ->
+          availabilityViewModel.getAvailabilitiesByProfessionalId(professionalId)
+          println(professionalId)
         }
-      }
+      )
       HorizontalDivider()
     }
+    AvailableTimesList(availabilities = availableTime.value)
+  }
+}
+
+@Composable
+fun ProfessionalList(professionals: List<ApiProfessionalResponse>, onClick: (Int) -> Unit) {
+  LazyRow(
+    modifier = Modifier
+      .padding(4.dp),
+    contentPadding = PaddingValues(4.dp)
+  ) {
+    if (professionals.isNotEmpty()) {
+      items(professionals) { professional ->
+        Column(
+          modifier = Modifier
+            .clickable {
+              onClick(professional.id)
+            },
+          horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+          Box(
+            //TODO: COLOCAR A IMAGEM DO PROFISSIONAL
+            modifier = Modifier
+              .size(50.dp)
+              .clip(CircleShape)
+              .background(Color.Gray)
+          )
+          Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = professional.user.name.lowercase(),
+            fontSize = 12.sp
+          )
+        }
+      }
+    }
+  }
+}
+
+@Composable
+fun AvailableTimesList(availabilities: List<ApiAvailabilityResponse>) {
+  if (availabilities.isEmpty()) {
+    Column(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 24.dp),
+    ) {
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+      ) {
+        Text(
+          text = "Nenhum horário disponivel'",
+          fontSize = 16.sp
+        )
+      }
+    }
+  } else {
     LazyVerticalGrid(
       modifier = Modifier
-        .weight(1f)
         .padding(PaddingValues(top = 8.dp)),
       columns = GridCells.Adaptive(minSize = 128.dp),
     ) {
-      items(20) { availableTime ->
+      items(availabilities) { availableTime ->
         Surface(
           shape = RoundedCornerShape(16.dp),
           color = Color.White,
@@ -151,21 +211,29 @@ fun AppointmentScreen() {
               .padding(16.dp)
           ) {
             Text(
-              text = "13:00",
+              text = availableTime.time,
               color = Color.Black
             )
           }
         }
       }
     }
-
   }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun AppointmentScreenPreview() {
+  val apiAvailabilityServiceMock = ApiAvailabilityServiceMock()
+  val availabilityViewModel = AvailabilityViewModel(apiAvailabilityServiceMock)
+
+  val apiProfessionalServiceMock = ApiProfessionalServiceMock()
+  val professionalViewModel = ProfessionalViewModel(apiProfessionalServiceMock)
+
   BarbershopApplicationTheme {
-    AppointmentScreen()
+    AppointmentScreen(
+      availabilityViewModel = availabilityViewModel,
+      professionalViewModel = professionalViewModel
+    )
   }
 }
