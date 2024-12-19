@@ -12,33 +12,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = DodgerBlue,
-    secondary = LightBlue,
-    tertiary = DarkBlue,
-    background = DarkBackground,
-    surface = DarkSurface
-)
+//private val DarkColorScheme = darkColorScheme(
+//    primary = DarkPrimary,
+//    primaryContainer = DarkPrimaryVariant,
+//    secondary = DarkSecondary,
+//    background = DarkBackground,
+//    surface = DarkSurface,
+//    onPrimary = DarkOnPrimary,
+//    onSecondary = DarkOnSecondary,
+//    onBackground = DarkOnBackground,
+//    onSurface = DarkOnSurface
+//)
 
 private val LightColorScheme = lightColorScheme(
-    primary = DodgerBlue,
-    secondary = LightBlue,
-    tertiary = DarkBlue,
-    background = Background,
-    surface = Surface,
-    onPrimary = Color.White,
-    onSecondary = TextSecondary,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF3E00FF),
-    onSurface = Color(0xFF1C1B1F),
-
+    primary = LightPrimary,
+    primaryContainer = LightPrimaryVariant,
+    secondary = LightSecondary,
+    background = LightBackground,
+    surface = LightSurface,
+    onPrimary = LightOnPrimary,
+    onSecondary = LightOnSecondary,
+    onBackground = LightOnBackground,
+    onSurface = LightOnSurface
 )
 
+/**
+ * Disabled dynamic colors
+ */
 @Composable
 fun BarbershopApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -47,7 +51,7 @@ fun BarbershopApplicationTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
+//        darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
