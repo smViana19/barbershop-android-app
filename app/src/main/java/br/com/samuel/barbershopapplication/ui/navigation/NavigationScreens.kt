@@ -5,4 +5,6 @@ enum class NavigationScreens {
     LOGIN_SCREEN,
     HOME_SCREEN,
     APPOINTMENT_SCREEN,
+    CALENDAR_SCREEN,
+    PROFILE_SCREEN
 }
