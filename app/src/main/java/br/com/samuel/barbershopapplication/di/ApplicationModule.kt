@@ -1,5 +1,6 @@
 package br.com.samuel.barbershopapplication.di
 
+import br.com.samuel.barbershopapplication.backendservices.api.ApiAppointmentService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAuthService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAvailabilityService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiProfessionalService
@@ -58,6 +59,11 @@ object ApplicationModule {
     @Provides
     fun provideServiceService(retrofit: Retrofit): ApiServiceService {
         return retrofit.create(ApiServiceService::class.java)
+    }
+
+    @Provides
+    fun provideAppointmentService(retrofit: Retrofit): ApiAppointmentService {
+        return retrofit.create(ApiAppointmentService::class.java)
     }
 
     @Provides
