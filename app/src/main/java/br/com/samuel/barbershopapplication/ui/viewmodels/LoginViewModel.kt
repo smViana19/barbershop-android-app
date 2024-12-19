@@ -4,8 +4,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAuthService
 import br.com.samuel.barbershopapplication.model.ApiAuthRequest
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,14 +21,14 @@ class LoginViewModel @Inject constructor(
     private val _password = mutableStateOf("")
     val password: MutableState<String> = _password
 
-    fun onClickButtonLogin() {
+    fun onClickButtonLogin(navController: NavController) {
         viewModelScope.launch {
             val apiAuthRequest = ApiAuthRequest(_email.value, _password.value)
             try {
                 // TODO: Login request/response api 
                 val response = apiAuthService.login(apiAuthRequest)
                 if(response.isSuccessful) {
-                    println("Logado com sucesso")
+                    navController.navigate(NavigationScreens.HOME_SCREEN.name)
                 } else {
                     println("Erro ao logar")
                 }
