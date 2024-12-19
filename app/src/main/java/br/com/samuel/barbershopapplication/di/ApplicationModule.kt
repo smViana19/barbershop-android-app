@@ -1,5 +1,6 @@
 package br.com.samuel.barbershopapplication.di
 
+import android.content.Context
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAppointmentService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAuthService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAvailabilityService
@@ -7,10 +8,13 @@ import br.com.samuel.barbershopapplication.backendservices.api.ApiProfessionalSe
 import br.com.samuel.barbershopapplication.backendservices.api.ApiServiceService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiSpecialtyService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiUserService
+import br.com.samuel.barbershopapplication.backendservices.sharedprefs.SharedPrefsService
+import br.com.samuel.barbershopapplication.backendservices.sharedprefs.SharedPrefsServiceImpl
 import br.com.samuel.barbershopapplication.constants.APP_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -33,6 +37,11 @@ object ApplicationModule {
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @Provides
+    fun provideSharedPrefsService(@ApplicationContext context: Context): SharedPrefsService {
+        return SharedPrefsServiceImpl(context)
     }
 
     @Provides
