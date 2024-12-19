@@ -27,4 +27,25 @@ class SharedPrefsServiceImpl(context: Context) : SharedPrefsService{
         val role = sharedPreferences.getString("user_role", "") ?: ""
         return ApiUserRequest(name, email, password)
     }
+
+    override fun saveAuthToken(token: String) {
+        sharedPreferences.edit().apply {
+            putString("auth_token", token)
+            apply()
+        }
+    }
+
+    override fun isLoggedIn(): Boolean {
+        val token = sharedPreferences.getString("auth_token", null)
+        return token != null && token.isEmpty()
+    }
+
+    override fun clearAuthToken() {
+        sharedPreferences.edit().apply {
+            remove("auth_token")
+            apply()
+        }
+    }
+
+
 }
