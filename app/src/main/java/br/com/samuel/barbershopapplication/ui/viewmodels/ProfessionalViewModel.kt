@@ -26,8 +26,6 @@ class ProfessionalViewModel @Inject constructor(
                     println(res.user.name)
                 }
                 println("_professionals: $_professionals")
-                println("to tao solteiro profissional")
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }
