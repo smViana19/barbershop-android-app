@@ -62,6 +62,8 @@ fun AppointmentScreen(
 ) {
   val professionals = professionalViewModel.professionals
   val availableTime = availabilityViewModel.availabilities
+  val availabilities by availabilityViewModel.filteredAvailabilities.collectAsState()
+
   val currentDate = remember { LocalDate.now() }
   val currentMonth = remember { YearMonth.now() }
   val startDate = remember { currentMonth.minusMonths(1).atStartOfMonth() }
@@ -112,7 +114,7 @@ fun AppointmentScreen(
         Icon(painter = painterResource(R.drawable.ic_calendar_24), contentDescription = "calendar")
       }
     }
-    WeekCalendar()
+    WeekCalendar(availabilityViewModel = availabilityViewModel)
 
     Column(modifier = Modifier.padding(top = 16.dp)) {
       Row(
@@ -135,7 +137,7 @@ fun AppointmentScreen(
       )
       HorizontalDivider()
     }
-    AvailableTimesList(availabilities = availableTime.value)
+    AvailableTimesList(availabilities = availabilities)
   }
 }
 
@@ -186,7 +188,7 @@ fun AvailableTimesList(availabilities: List<ApiAvailabilityResponse>) {
         horizontalArrangement = Arrangement.Center
       ) {
         Text(
-          text = "Nenhum horário disponivel'",
+          text = "Nenhum horário disponivel",
           fontSize = 16.sp
         )
       }
