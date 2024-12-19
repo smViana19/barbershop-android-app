@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.viewmodels.AvailabilityViewModel
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
@@ -44,7 +45,7 @@ fun Calendar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WeekCalendar() {
+fun WeekCalendar(availabilityViewModel: AvailabilityViewModel) {
   val currentDate = remember { LocalDate.now() }
   val currentMonth = remember { YearMonth.now() }
   val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() }
@@ -67,8 +68,9 @@ fun WeekCalendar() {
         selectedDate = selectedDate,
         onClick = { clickableDate ->
           selectedDate = clickableDate
+          println("dia selecionado: $clickableDate")
+          availabilityViewModel.selectDate(clickableDate.toString())
         })
-
     }
   )
   HorizontalDivider()
@@ -103,6 +105,7 @@ fun Day(day: WeekDay, selectedDate: LocalDate?, onClick: (LocalDate) -> Unit) {
     )
   }
 }
+
 @Composable
 fun DayMonth(day: CalendarDay, onClick: (CalendarDay) -> Unit) {
   Box(
@@ -128,7 +131,6 @@ fun DayMonth(day: CalendarDay, onClick: (CalendarDay) -> Unit) {
     )
   }
 }
-
 
 
 @Composable
