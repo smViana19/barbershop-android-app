@@ -35,13 +35,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiProfessionalServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiServiceServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiSpecialtyServiceMock
+import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServiceMock
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
+import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ServicesViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.SpecialtyViewModel
@@ -49,408 +53,413 @@ import br.com.samuel.barbershopapplication.utils.formatCurrency
 
 @Composable
 fun HomeScreen(
-    serviceViewmodel: ServicesViewModel = hiltViewModel(),
-    professionalViewmodel: ProfessionalViewModel = hiltViewModel(),
-    specialtyViewModel: SpecialtyViewModel = hiltViewModel()
+  homeViewModel: HomeViewModel = hiltViewModel(),
+  navController: NavController
+
 ) {
-    val servicesData = serviceViewmodel.serviceData
-    val professionals = professionalViewmodel.professionals
-    val specialties = specialtyViewModel.specialties
-    val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+  val servicesData = homeViewModel.serviceData
+  val professionals = homeViewModel.professionals
+  val specialties = homeViewModel.specialties
+  val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
+  var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(selectedTabIndex) {
-        when(selectedTabIndex) {
-            0 -> serviceViewmodel.getAllServices()
-            1 -> professionalViewmodel.getAllProfessionals()
-            2 -> specialtyViewModel.getAllSpecialties()
-        }
+  LaunchedEffect(selectedTabIndex) {
+    homeViewModel.verifyIsUserLoggedIn(navController = navController)
+    when (selectedTabIndex) {
+      0 -> homeViewModel.getAllServices()
+      1 -> homeViewModel.getAllProfessionals()
+      2 -> homeViewModel.getAllSpecialties()
     }
+  }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
+  Column(
+    modifier = Modifier.fillMaxSize()
+  ) {
+    Row(
+      modifier = Modifier
+        .fillMaxWidth()
+        .statusBarsPadding(),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { /*TODO VOLTAR NAVIGATION*/ }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back_24),
-                    contentDescription = "Back"
-                )
-            }
-            Text(
-                text = "BarberShop",
-            )
-            IconButton(onClick = {/*TODO TELA DE MAPA*/ }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_location_24),
-                    contentDescription = "Back"
-                )
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+      IconButton(onClick = { /*TODO VOLTAR NAVIGATION*/ }) {
+        Icon(
+          painter = painterResource(R.drawable.ic_back_24),
+          contentDescription = "Back"
+        )
+      }
+      Text(
+        text = "BarberShop",
+      )
+      IconButton(onClick = {/*TODO TELA DE MAPA*/ }) {
+        Icon(
+          painter = painterResource(R.drawable.ic_location_24),
+          contentDescription = "Back"
+        )
+      }
+    }
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.Center
+
+    ) {
+      ScrollableTabRow(
+        selectedTabIndex = selectedTabIndex,
+        edgePadding = 16.dp,
+        containerColor = Color.Transparent,
+        contentColor = Color(0xFF3B3B3B),
 
         ) {
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                edgePadding = 16.dp,
-                containerColor = Color.Transparent,
-                contentColor = Color(0xFF3B3B3B),
-
-                ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = { Text(text = title) }
-                    )
-                }
-
-            }
-
+        tabs.forEachIndexed { index, title ->
+          Tab(selected = selectedTabIndex == index,
+            onClick = { selectedTabIndex = index },
+            text = { Text(text = title) }
+          )
         }
-        Spacer(modifier = Modifier.padding(top = 16.dp))
-        Column(modifier = Modifier.padding()) {
-            when (selectedTabIndex) {
-                0 -> ServicesTab(services = servicesData.value)
-                1 -> ProfessionalsTab(professionals = professionals.value)
-                2 -> SpecialtiesTab(specialties = specialties.value)
-            }
-        }
+
+      }
 
     }
+    Spacer(modifier = Modifier.padding(top = 16.dp))
+    Column(modifier = Modifier.padding()) {
+      when (selectedTabIndex) {
+        0 -> ServicesTab(services = servicesData.value)
+        1 -> ProfessionalsTab(professionals = professionals.value)
+        2 -> SpecialtiesTab(specialties = specialties.value)
+      }
+    }
+
+  }
 }
 
 @Composable
 fun ServicesTab(services: List<ApiServiceResponse>) {
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.Center
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = 16.dp),
+    horizontalArrangement = Arrangement.Center
 
-    ) {
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
-            label = { Text(text = "Pesquisar serviço") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_search_24),
-                    contentDescription = "Search"
-                )
-            },
-            trailingIcon = {},
+  ) {
+    OutlinedTextField(
+      modifier = Modifier.fillMaxWidth(),
+      value = "",
+      onValueChange = {},
+      label = { Text(text = "Pesquisar serviço") },
+      leadingIcon = {
+        Icon(
+          painter = painterResource(R.drawable.ic_search_24),
+          contentDescription = "Search"
         )
-    }
-    Spacer(modifier = Modifier.padding(8.dp))
+      },
+      trailingIcon = {},
+    )
+  }
+  Spacer(modifier = Modifier.padding(8.dp))
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(services) { service ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier,
-                            text = service.name,
-                            fontSize = 16.sp,
-                        )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(end = 8.dp),
-                            text = "R$ ${service.price.formatCurrency()}",
-                            fontSize = 14.sp
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .padding(end = 4.dp),
-                                painter = painterResource(R.drawable.ic_time_24),
-                                contentDescription = "time"
-                            )
-                            Text(
-                                text = "30min",
-                                fontSize = 14.sp
-                            )
-                        }
-                    }
-                }
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Button(
-                            modifier = Modifier,
-                            shape = RoundedCornerShape(4.dp),
-                            contentPadding = PaddingValues(4.dp),
-                            onClick = {}) {
-                            Text(
-                                text = "Agendar",
-                            )
-                        }
-                    }
-                }
-            }
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 4.dp),
-                color = Color.LightGray,
-                thickness = 1.dp
+  LazyColumn(
+    modifier = Modifier.fillMaxSize()
+  ) {
+    items(services) { service ->
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Column(modifier = Modifier.weight(1f)) {
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+          ) {
+            Text(
+              modifier = Modifier,
+              text = service.name,
+              fontSize = 16.sp,
             )
-
+          }
+          Row(
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+          ) {
+            Text(
+              modifier = Modifier.padding(end = 8.dp),
+              text = "R$ ${service.price.formatCurrency()}",
+              fontSize = 14.sp
+            )
+            Row(
+              modifier = Modifier.fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically
+            ) {
+              Icon(
+                modifier = Modifier
+                  .size(16.dp)
+                  .padding(end = 4.dp),
+                painter = painterResource(R.drawable.ic_time_24),
+                contentDescription = "time"
+              )
+              Text(
+                text = "30min",
+                fontSize = 14.sp
+              )
+            }
+          }
         }
+        Column(modifier = Modifier.weight(1f)) {
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+          ) {
+            Button(
+              modifier = Modifier,
+              shape = RoundedCornerShape(4.dp),
+              contentPadding = PaddingValues(4.dp),
+              onClick = {}) {
+              Text(
+                text = "Agendar",
+              )
+            }
+          }
+        }
+      }
+      HorizontalDivider(
+        modifier = Modifier.padding(horizontal = 4.dp),
+        color = Color.LightGray,
+        thickness = 1.dp
+      )
+
     }
+  }
 }
 
 @Composable
 fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
-            label = { Text(text = "Pesquisar") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_search_24),
-                    contentDescription = "Search"
-                )
-            },
-            trailingIcon = {},
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = 16.dp),
+    horizontalArrangement = Arrangement.Center
+  ) {
+    OutlinedTextField(
+      modifier = Modifier.fillMaxWidth(),
+      value = "",
+      onValueChange = {},
+      label = { Text(text = "Pesquisar") },
+      leadingIcon = {
+        Icon(
+          painter = painterResource(R.drawable.ic_search_24),
+          contentDescription = "Search"
         )
-    }
-    Spacer(modifier = Modifier.padding(8.dp))
+      },
+      trailingIcon = {},
+    )
+  }
+  Spacer(modifier = Modifier.padding(8.dp))
 
-    if (professionals.isEmpty()) {
-        Column(
+  if (professionals.isEmpty()) {
+    Column(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 24.dp),
+    ) {
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+      ) {
+        Text(
+          text = "Nenhum item para exibir",
+          fontSize = 16.sp
+        )
+      }
+    }
+
+  } else {
+    LazyColumn(
+      modifier = Modifier.fillMaxSize()
+    ) {
+      items(professionals) { professional ->
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 24.dp),
-        ) {
+              .fillMaxWidth()
+              .weight(1f)
+          ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+              modifier = Modifier.fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically
             ) {
+              Box(
+                //TODO: COLOCAR A IMAGEM DO PROFISSIONAL
+                modifier = Modifier
+                  .size(50.dp)
+                  .clip(CircleShape)
+                  .background(Color.Gray)
+              )
+              Text(
+                modifier = Modifier
+                  .padding(start = 4.dp),
+                text = professional.user.name.lowercase()
+              )
+            }
+
+          }
+          Column(
+            modifier = Modifier
+              .fillMaxWidth()
+              .weight(1f)
+          ) {
+            Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.End
+            ) {
+              Button(
+                modifier = Modifier,
+                shape = RoundedCornerShape(4.dp),
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                onClick = {}) {
                 Text(
-                    text = "Nenhum item para exibir",
-                    fontSize = 16.sp
+                  text = "Ver mais",
                 )
+              }
             }
+          }
         }
-
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(professionals) { professional ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                //TODO: COLOCAR A IMAGEM DO PROFISSIONAL
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Gray)
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(start = 4.dp),
-                                text = professional.user.name.lowercase()
-                            )
-                        }
-
-                    }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Button(
-                                modifier = Modifier,
-                                shape = RoundedCornerShape(4.dp),
-                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
-                                onClick = {}) {
-                                Text(
-                                    text = "Ver mais",
-                                )
-                            }
-                        }
-                    }
-                }
-                HorizontalDivider()
-            }
-        }
+        HorizontalDivider()
+      }
     }
+  }
 
 
 }
 
 @Composable
 fun SpecialtiesTab(specialties: List<ApiSpecialtyResponse>) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
-            label = { Text(text = "Pesquisar") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_search_24),
-                    contentDescription = "Search"
-                )
-            },
-            trailingIcon = {},
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = 16.dp),
+    horizontalArrangement = Arrangement.Center
+  ) {
+    OutlinedTextField(
+      modifier = Modifier.fillMaxWidth(),
+      value = "",
+      onValueChange = {},
+      label = { Text(text = "Pesquisar") },
+      leadingIcon = {
+        Icon(
+          painter = painterResource(R.drawable.ic_search_24),
+          contentDescription = "Search"
         )
+      },
+      trailingIcon = {},
+    )
+  }
+  Spacer(modifier = Modifier.padding(8.dp))
+  if (specialties.isEmpty()) {
+    Column(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 24.dp),
+    ) {
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+      ) {
+        Text(
+          text = "Nenhum item para exibir",
+          fontSize = 16.sp
+        )
+      }
     }
-    Spacer(modifier = Modifier.padding(8.dp))
-    if (specialties.isEmpty()) {
-        Column(
+  } else {
+    LazyColumn(
+      modifier = Modifier.fillMaxSize()
+    ) {
+      items(specialties) { specialty ->
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 24.dp),
-        ) {
+              .fillMaxWidth()
+              .weight(1f)
+          ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+              modifier = Modifier.fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically
             ) {
+              Box(
+                modifier = Modifier
+                  .size(50.dp)
+                  .clip(CircleShape)
+                  .background(Color.Gray)
+              )
+              Text(
+                modifier = Modifier
+                  .padding(start = 4.dp),
+                text = specialty.name
+              )
+            }
+            Row {
+              Text(text = specialty.description)
+            }
+
+          }
+          Column(
+            modifier = Modifier
+              .fillMaxWidth()
+              .weight(1f)
+          ) {
+            Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.End
+            ) {
+              Button(
+                modifier = Modifier,
+                shape = RoundedCornerShape(4.dp),
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                onClick = {}) {
                 Text(
-                    text = "Nenhum item para exibir",
-                    fontSize = 16.sp
+                  text = "Ver mais",
                 )
+              }
             }
+          }
         }
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(specialties) { specialty ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Gray)
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(start = 4.dp),
-                                text = specialty.name
-                            )
-                        }
-                        Row {
-                            Text(text = specialty.description)
-                        }
+        HorizontalDivider()
 
-                    }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Button(
-                                modifier = Modifier,
-                                shape = RoundedCornerShape(4.dp),
-                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
-                                onClick = {}) {
-                                Text(
-                                    text = "Ver mais",
-                                )
-                            }
-                        }
-                    }
-                }
-                HorizontalDivider()
-
-            }
-        }
+      }
     }
-    Text("Teste especialidades")
+  }
+  Text("Teste especialidades")
 
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    val apiServiceServiceMock = ApiServiceServiceMock()
-    val serviceViewmodel = ServicesViewModel(apiServiceServiceMock)
+  val navController = rememberNavController()
+  val apiServiceServiceMock = ApiServiceServiceMock()
+  val apiProfessionalServiceMock = ApiProfessionalServiceMock()
+  val apiSpecialtyServiceMock = ApiSpecialtyServiceMock()
+  val sharedPrefsServiceMock = SharedPrefsServiceMock()
 
-    val apiProfessionalServiceMock = ApiProfessionalServiceMock()
-    val professionalViewmodel = ProfessionalViewModel(apiProfessionalServiceMock)
+  val homeViewModel = HomeViewModel(
+    sharedPrefsServiceMock,
+    apiProfessionalServiceMock,
+    apiServiceServiceMock,
+    apiSpecialtyServiceMock
+  )
 
-    val apiSpecialtyServiceMock = ApiSpecialtyServiceMock()
-    val specialtyViewModel = SpecialtyViewModel(apiSpecialtyServiceMock)
-
-    HomeScreen(serviceViewmodel, professionalViewmodel, specialtyViewModel)
+  HomeScreen(homeViewModel, navController)
 }
