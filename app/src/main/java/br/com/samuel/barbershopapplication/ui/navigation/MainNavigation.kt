@@ -5,8 +5,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import br.com.samuel.barbershopapplication.ui.screens.AppointmentScreen
+import br.com.samuel.barbershopapplication.ui.screens.CalendarScreen
+import br.com.samuel.barbershopapplication.ui.screens.HomeScreen
 import br.com.samuel.barbershopapplication.ui.screens.LoginScreen
 import br.com.samuel.barbershopapplication.ui.screens.RegisterScreen
+import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.LoginViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.RegisterViewModel
 
@@ -16,18 +20,32 @@ fun MainNavigation() {
     val navController = rememberNavController()
     val registerViewModel: RegisterViewModel = hiltViewModel()
     val loginViewModel: LoginViewModel = hiltViewModel()
+    val homeViewModel: HomeViewModel = hiltViewModel()
     NavHost(
         navController = navController,
-        startDestination = NavigationScreens.REGISTER_SCREEN.name
+        startDestination = NavigationScreens.HOME_SCREEN.name
     ) {
         composable(route = NavigationScreens.REGISTER_SCREEN.name) {
             RegisterScreen(registerViewModel, navController)
         }
 
         composable(route = NavigationScreens.LOGIN_SCREEN.name) {
-            println("nome da screen ${NavigationScreens.LOGIN_SCREEN.name}" )
-            LoginScreen(loginViewModel)
+            LoginScreen(loginViewModel, navController)
         }
+
+        composable(route = NavigationScreens.HOME_SCREEN.name) {
+            HomeScreen(homeViewModel, navController)
+        }
+
+        composable(route = NavigationScreens.APPOINTMENT_SCREEN.name) {
+            AppointmentScreen()
+        }
+
+        composable(route = NavigationScreens.CALENDAR_SCREEN.name) {
+            CalendarScreen()
+        }
+
+
 
 
         /**
