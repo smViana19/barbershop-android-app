@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import br.com.samuel.barbershopapplication.ui.navigation.MainNavigation
-import br.com.samuel.barbershopapplication.ui.screens.AppointmentScreen
-import br.com.samuel.barbershopapplication.ui.screens.HomeScreen
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
