@@ -14,12 +14,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AvailabilityViewModel @Inject constructor(
+class ScheduleViewModel @Inject constructor(
   private val apiAvailabilityService: ApiAvailabilityService,
   private val apiProfessionalService: ApiProfessionalService
+
 ) : ViewModel() {
   private val _professionals = mutableStateOf<List<ApiProfessionalResponse>>(emptyList())
   val professionals: MutableState<List<ApiProfessionalResponse>> = _professionals
+
   private val _availabilities = mutableStateOf<List<ApiAvailabilityResponse>>(emptyList())
   val availabilities: MutableState<List<ApiAvailabilityResponse>> = _availabilities
 
