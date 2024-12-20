@@ -5,7 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.com.samuel.barbershopapplication.ui.screens.AppointmentScreen
+import br.com.samuel.barbershopapplication.ui.screens.ScheduleScreen
 import br.com.samuel.barbershopapplication.ui.screens.CalendarScreen
 import br.com.samuel.barbershopapplication.ui.screens.HomeScreen
 import br.com.samuel.barbershopapplication.ui.screens.LoginScreen
@@ -38,7 +38,7 @@ fun MainNavigation() {
         }
 
         composable(route = NavigationScreens.APPOINTMENT_SCREEN.name) {
-            AppointmentScreen()
+            ScheduleScreen()
         }
 
         composable(route = NavigationScreens.CALENDAR_SCREEN.name) {

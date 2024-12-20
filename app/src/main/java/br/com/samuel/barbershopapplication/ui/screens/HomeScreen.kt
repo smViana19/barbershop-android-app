@@ -45,6 +45,7 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServ
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ServicesViewModel
@@ -62,8 +63,13 @@ fun HomeScreen(
   val specialties = homeViewModel.specialties
   val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
   var selectedTabIndex by remember { mutableIntStateOf(0) }
-
+  val isLoggedIn = homeViewModel.isLoggedIn
   LaunchedEffect(selectedTabIndex) {
+    println("esta logado? ${isLoggedIn.value}")
+//    if(isLoggedIn.value) {
+//      navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
+//      println("deu certo navegacao pelo launched")
+//    }
     homeViewModel.verifyIsUserLoggedIn(navController = navController)
     when (selectedTabIndex) {
       0 -> homeViewModel.getAllServices()
@@ -134,7 +140,6 @@ fun HomeScreen(
 
 @Composable
 fun ServicesTab(services: List<ApiServiceResponse>) {
-
   Row(
     modifier = Modifier
       .fillMaxWidth()
