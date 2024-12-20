@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +45,7 @@ import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.AvailabilityViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
+import br.com.samuel.barbershopapplication.ui.viewmodels.ScheduleViewModel
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -56,13 +56,13 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun AppointmentScreen(
-  availabilityViewModel: AvailabilityViewModel = hiltViewModel(),
-  professionalViewModel: ProfessionalViewModel = hiltViewModel()
+fun ScheduleScreen(
+  scheduleViewModel: ScheduleViewModel = hiltViewModel()
+//  availabilityViewModel: AvailabilityViewModel = hiltViewModel(),
+//  professionalViewModel: ProfessionalViewModel = hiltViewModel()
 ) {
-  val professionals = professionalViewModel.professionals
-  val availableTime = availabilityViewModel.availabilities
-  val availabilities by availabilityViewModel.filteredAvailabilities.collectAsState()
+  val professionals = scheduleViewModel.professionals
+  val availabilities by scheduleViewModel.filteredAvailabilities.collectAsState()
 
   val currentDate = remember { LocalDate.now() }
   val currentMonth = remember { YearMonth.now() }
@@ -76,14 +76,12 @@ fun AppointmentScreen(
     firstVisibleWeekDate = currentDate,
     firstDayOfWeek = daysOfWeek.first()
   )
-  var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
   val visibleMonth = remember(state.firstVisibleWeek) {
     YearMonth.from(state.firstVisibleWeek.days.first().date)
   }
 
   LaunchedEffect(Unit) {
-    professionalViewModel.getAllProfessionals()
-
+    scheduleViewModel.getAllProfessionals()
   }
 
   Column(
@@ -114,7 +112,7 @@ fun AppointmentScreen(
         Icon(painter = painterResource(R.drawable.ic_calendar_24), contentDescription = "calendar")
       }
     }
-    WeekCalendar(availabilityViewModel = availabilityViewModel)
+    WeekCalendar(scheduleViewModel = scheduleViewModel)
 
     Column(modifier = Modifier.padding(top = 16.dp)) {
       Row(
@@ -131,7 +129,7 @@ fun AppointmentScreen(
       ProfessionalList(
         professionals = professionals.value,
         onClick = { professionalId ->
-          availabilityViewModel.getAvailabilitiesByProfessionalId(professionalId)
+          scheduleViewModel.getAvailabilitiesByProfessionalId(professionalId)
           println(professionalId)
         }
       )
@@ -225,17 +223,12 @@ fun AvailableTimesList(availabilities: List<ApiAvailabilityResponse>) {
 
 @Preview(showBackground = true)
 @Composable
-private fun AppointmentScreenPreview() {
+private fun ScheduleScreenPreview() {
   val apiAvailabilityServiceMock = ApiAvailabilityServiceMock()
-  val availabilityViewModel = AvailabilityViewModel(apiAvailabilityServiceMock)
-
   val apiProfessionalServiceMock = ApiProfessionalServiceMock()
-  val professionalViewModel = ProfessionalViewModel(apiProfessionalServiceMock)
+  val scheduleViewmodel = ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock)
 
   BarbershopApplicationTheme {
-    AppointmentScreen(
-      availabilityViewModel = availabilityViewModel,
-      professionalViewModel = professionalViewModel
-    )
+    ScheduleScreen(scheduleViewmodel)
   }
 }
