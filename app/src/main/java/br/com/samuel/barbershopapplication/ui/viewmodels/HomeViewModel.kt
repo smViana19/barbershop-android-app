@@ -25,6 +25,9 @@ class HomeViewModel @Inject constructor(
   private val apiSpecialtyService: ApiSpecialtyService
 ) : ViewModel() {
 
+  private val _isLoggedIn = mutableStateOf(false)
+  val isLoggedIn: MutableState<Boolean> = _isLoggedIn
+
   private val _professionals = mutableStateOf<List<ApiProfessionalResponse>>(emptyList())
   val professionals: MutableState<List<ApiProfessionalResponse>> = _professionals
   private val _serviceData = mutableStateOf<List<ApiServiceResponse>>(emptyList())
@@ -71,8 +74,15 @@ class HomeViewModel @Inject constructor(
   }
 
   fun verifyIsUserLoggedIn(navController: NavController) {
-    if(!sharedPrefsService.isLoggedIn()) {
+    val token = sharedPrefsService.isLoggedIn()
+    if(!token) {
       navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
+    } else {
+      _isLoggedIn.value = true
     }
+
+//    if(!sharedPrefsService.isLoggedIn()) {
+//      navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
+//    }
   }
 }
