@@ -37,7 +37,7 @@ class SharedPrefsServiceImpl(context: Context) : SharedPrefsService{
 
     override fun isLoggedIn(): Boolean {
         val token = sharedPreferences.getString("auth_token", null)
-        return token != null && token.isEmpty()
+        return !token.isNullOrEmpty()
     }
 
     override fun clearAuthToken() {
