@@ -16,8 +16,6 @@ class MainActivity : ComponentActivity() {
     setContent {
       BarbershopApplicationTheme {
         MainNavigation()
-//        AppointmentScreen()
-//        HomeScreen()
       }
     }
   }
