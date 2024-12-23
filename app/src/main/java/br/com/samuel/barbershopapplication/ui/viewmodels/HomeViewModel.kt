@@ -75,14 +75,11 @@ class HomeViewModel @Inject constructor(
 
   fun verifyIsUserLoggedIn(navController: NavController) {
     val token = sharedPrefsService.isLoggedIn()
-    if(!token) {
+    if (!token) {
       navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
     } else {
       _isLoggedIn.value = true
     }
 
-//    if(!sharedPrefsService.isLoggedIn()) {
-//      navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
-//    }
   }
 }
