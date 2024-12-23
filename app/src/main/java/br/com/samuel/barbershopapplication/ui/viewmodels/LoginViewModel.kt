@@ -33,10 +33,7 @@ class LoginViewModel @Inject constructor(
           if (token != null) {
             sharedPrefsService.saveAuthToken(token)
           }
-          println("*")
           navController.navigate(NavigationScreens.HOME_SCREEN.name)
-          println("||")
-
         } else {
           println("Erro ao logar")
         }
