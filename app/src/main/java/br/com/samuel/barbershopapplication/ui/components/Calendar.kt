@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,15 +26,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
-import br.com.samuel.barbershopapplication.ui.viewmodels.AvailabilityViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ScheduleViewModel
+import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -108,27 +111,45 @@ fun Day(day: WeekDay, selectedDate: LocalDate?, onClick: (LocalDate) -> Unit) {
 }
 
 @Composable
-fun DayMonth(day: CalendarDay, onClick: (CalendarDay) -> Unit) {
+fun DayMonth(
+  day: CalendarDay,
+  selectedDate: LocalDate?,
+  calendarState: CalendarState,
+  onClick: (LocalDate) -> Unit
+) {
+  val interactionSource = remember { MutableInteractionSource() }
+  val isSelected = selectedDate == day.date && day.position == DayPosition.MonthDate
+  val coroutineScope = rememberCoroutineScope()
+  val isDayEnabled = day.position == DayPosition.MonthDate || day.position == DayPosition.InDate || day.position == DayPosition.OutDate
+  val textColor = if (day.position == DayPosition.MonthDate) Color.Black else Color.Gray
   Box(
     modifier = Modifier
       .aspectRatio(1f)
-      .padding(8.dp),
-//      .background(
-//        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
-//        shape = CircleShape,
-//      )
-//      .clickable(
-//        interactionSource = interactionSource,
-//        indication = null,
-//      ) {
-//        onClick(day.date)
-//      },
+      .padding(8.dp)
+      .background(
+        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+        shape = CircleShape,
+      )
+      .clickable(
+        enabled = isDayEnabled,
+        interactionSource = interactionSource,
+        indication = null,
+      ) {
+        if(isDayEnabled) {
+          onClick(day.date)
+          coroutineScope.launch {
+            calendarState.animateScrollToMonth(YearMonth.from(day.date))
+          }
+        }
+
+      },
     contentAlignment = Alignment.Center
   ) {
     Text(
       fontSize = 16.sp,
       text = day.date.dayOfMonth.toString(),
       textAlign = TextAlign.Center,
+      color = textColor
     )
   }
 }
