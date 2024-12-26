@@ -24,6 +24,7 @@ import br.com.samuel.barbershopapplication.ui.components.DayMonth
 import br.com.samuel.barbershopapplication.ui.components.DaysOfWeekTitle
 import com.kizitonwose.calendar.compose.VerticalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
+import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import java.time.LocalDate
@@ -68,11 +69,16 @@ fun CalendarScreen() {
       }
     }
     VerticalCalendar(
+
       state = state,
       dayContent = { day ->
         DayMonth(
           day = day,
-          onClick = {}
+          selectedDate = selectedDate,
+          calendarState = state,
+          onClick = { clickableDate ->
+            selectedDate = clickableDate
+          }
         )
       },
       monthHeader = { month ->
