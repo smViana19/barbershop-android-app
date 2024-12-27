@@ -98,7 +98,6 @@ fun ScheduleScreen(
     scheduleViewModel.filteredDate(selectedDate)
   }
 
-
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier

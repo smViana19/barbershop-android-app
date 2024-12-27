@@ -25,8 +25,8 @@ fun MainNavigation() {
   val homeViewModel: HomeViewModel = hiltViewModel()
   NavHost(
     navController = navController,
-//    startDestination = NavigationScreens.HOME_SCREEN.name
-    startDestination = "${NavigationScreens.SCHEDULE_SCREEN.name}/{selectedDate}"
+    startDestination = NavigationScreens.HOME_SCREEN.name
+//    startDestination = "${NavigationScreens.SCHEDULE_SCREEN.name}/{selectedDate}"
   ) {
     composable(route = NavigationScreens.REGISTER_SCREEN.name) {
       RegisterScreen(registerViewModel, navController)
@@ -40,27 +40,30 @@ fun MainNavigation() {
       HomeScreen(homeViewModel, navController)
     }
 
+//    composable(
+//      route = NavigationScreens.SCHEDULE_SCREEN.name
+//    ) {
+//      ScheduleScreen(selectedDate = "", sernavController)
+//    }
     composable(
-      route = "${NavigationScreens.SCHEDULE_SCREEN.name}/{selectedDate}",
-      arguments = listOf(navArgument("selectedDate") { type = NavType.StringType })
+      route = "${NavigationScreens.SCHEDULE_SCREEN.name}?selectedDate={selectedDate}&serviceId={serviceId}",
+      arguments = listOf(
+        navArgument("selectedDate") {
+          type = NavType.StringType
+          defaultValue = ""
+        },
+        navArgument("serviceId") {
+          type = NavType.IntType
+          defaultValue = -1
+        })
     ) { backStackEntry ->
       val selectedDate = backStackEntry.arguments?.getString("selectedDate") ?: ""
-      ScheduleScreen(selectedDate = selectedDate, navController)
+      val serviceId = backStackEntry.arguments?.getInt("serviceId") ?: -1
+      ScheduleScreen(selectedDate, serviceId, navController)
     }
 
     composable(route = NavigationScreens.CALENDAR_SCREEN.name) {
       CalendarScreen(navController)
     }
-
-    /**
-     * Composable para passar como parametro
-     */
-//        composable(
-//            route = "${NavigationScreens.LOGIN_SCREEN.name}/{userId}",
-//            arguments = listOf(navArgument("userId") {type = NavType.IntType} )
-//        ) { navBackEntry ->
-//
-//
-//        }
   }
 }
