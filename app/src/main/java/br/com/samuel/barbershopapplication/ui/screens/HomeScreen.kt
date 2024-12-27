@@ -45,6 +45,8 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServ
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
+import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
 import br.com.samuel.barbershopapplication.utils.formatCurrency
 
@@ -120,7 +122,7 @@ fun HomeScreen(
     Spacer(modifier = Modifier.padding(top = 16.dp))
     Column(modifier = Modifier.padding()) {
       when (selectedTabIndex) {
-        0 -> ServicesTab(services = servicesData.value)
+        0 -> ServicesTab(services = servicesData.value, navController = navController)
         1 -> ProfessionalsTab(professionals = professionals.value)
         2 -> SpecialtiesTab(specialties = specialties.value)
       }
@@ -130,7 +132,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun ServicesTab(services: List<ApiServiceResponse>) {
+fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -212,7 +214,11 @@ fun ServicesTab(services: List<ApiServiceResponse>) {
               modifier = Modifier,
               shape = RoundedCornerShape(4.dp),
               contentPadding = PaddingValues(4.dp),
-              onClick = {}) {
+              onClick = {
+                println("navegando...")
+                println("id do service: ${service.id}")
+                navController.navigate("${NavigationScreens.SCHEDULE_SCREEN.name}?serviceId=${service.id}")
+              }) {
               Text(
                 text = "Agendar",
               )
@@ -456,6 +462,7 @@ private fun HomeScreenPreview() {
     apiServiceServiceMock,
     apiSpecialtyServiceMock
   )
-
-  HomeScreen(homeViewModel, navController)
+  BarbershopApplicationTheme {
+    HomeScreen(homeViewModel, navController)
+  }
 }
