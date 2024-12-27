@@ -120,8 +120,14 @@ fun DayMonth(
   val interactionSource = remember { MutableInteractionSource() }
   val isSelected = selectedDate == day.date && day.position == DayPosition.MonthDate
   val coroutineScope = rememberCoroutineScope()
-  val isDayEnabled = day.position == DayPosition.MonthDate || day.position == DayPosition.InDate || day.position == DayPosition.OutDate
-  val textColor = if (day.position == DayPosition.MonthDate) Color.Black else Color.Gray
+  val isDayEnabled =
+    day.position == DayPosition.MonthDate || day.position == DayPosition.InDate || day.position == DayPosition.OutDate
+  val textColor = when {
+    isSelected -> Color.White
+    day.position == DayPosition.MonthDate -> Color.Black
+    else -> Color.Gray
+  }
+
   Box(
     modifier = Modifier
       .aspectRatio(1f)
@@ -135,7 +141,7 @@ fun DayMonth(
         interactionSource = interactionSource,
         indication = null,
       ) {
-        if(isDayEnabled) {
+        if (isDayEnabled) {
           onClick(day.date)
           coroutineScope.launch {
             calendarState.animateScrollToMonth(YearMonth.from(day.date))
