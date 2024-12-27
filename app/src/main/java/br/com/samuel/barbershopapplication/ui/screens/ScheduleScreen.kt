@@ -62,6 +62,7 @@ import java.util.Locale
 @Composable
 fun ScheduleScreen(
   selectedDate: String,
+  serviceId: Int, //TODO: ADICIONAR PARA CRIAR O AGENDAMENTO (BOTTOM SHEETS)
   navController: NavController,
   scheduleViewModel: ScheduleViewModel = hiltViewModel()
 ) {
@@ -96,6 +97,7 @@ fun ScheduleScreen(
   LaunchedEffect(selectedDate) {
     scheduleViewModel.filteredDate(selectedDate)
   }
+
 
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -243,12 +245,13 @@ fun AvailableTimesList(availabilities: List<ApiAvailabilityResponse>) {
 @Composable
 private fun ScheduleScreenPreview() {
   val selectedDate = ""
+  val serviceId = 1
   val navController = rememberNavController()
   val apiAvailabilityServiceMock = ApiAvailabilityServiceMock()
   val apiProfessionalServiceMock = ApiProfessionalServiceMock()
   val scheduleViewmodel = ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock)
 
   BarbershopApplicationTheme {
-    ScheduleScreen(selectedDate, navController, scheduleViewmodel)
+    ScheduleScreen(selectedDate, serviceId, navController, scheduleViewmodel)
   }
 }
