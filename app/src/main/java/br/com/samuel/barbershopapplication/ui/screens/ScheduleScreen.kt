@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -36,12 +37,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAvailabilityServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiProfessionalServiceMock
 import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.AvailabilityViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
@@ -57,18 +61,16 @@ import java.util.Locale
 
 @Composable
 fun ScheduleScreen(
+  selectedDate: String,
+  navController: NavController,
   scheduleViewModel: ScheduleViewModel = hiltViewModel()
-//  availabilityViewModel: AvailabilityViewModel = hiltViewModel(),
-//  professionalViewModel: ProfessionalViewModel = hiltViewModel()
 ) {
   val professionals = scheduleViewModel.professionals
   val availabilities by scheduleViewModel.filteredAvailabilities.collectAsState()
-
   val currentDate = remember { LocalDate.now() }
   val currentMonth = remember { YearMonth.now() }
   val startDate = remember { currentMonth.minusMonths(1).atStartOfMonth() }
   val endDate = remember { currentMonth.plusMonths(12).atEndOfMonth() }
-  val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
   val daysOfWeek = remember { daysOfWeek() }
   val state = rememberWeekCalendarState(
     startDate = startDate,
@@ -79,9 +81,20 @@ fun ScheduleScreen(
   val visibleMonth = remember(state.firstVisibleWeek) {
     YearMonth.from(state.firstVisibleWeek.days.first().date)
   }
+  val parsedDate = remember {
+    if (selectedDate.isNotEmpty()) {
+      LocalDate.parse(selectedDate)
+    } else {
+      LocalDate.now()
+    }
+  }
+  var currentSelectedDate by remember { mutableStateOf(parsedDate) }
 
   LaunchedEffect(Unit) {
     scheduleViewModel.getAllProfessionals()
+  }
+  LaunchedEffect(selectedDate) {
+    scheduleViewModel.filteredDate(selectedDate)
   }
 
   Column(
@@ -108,11 +121,16 @@ fun ScheduleScreen(
           Locale.getDefault()
         ) + " " + visibleMonth.year
       )
-      IconButton(onClick = {}) {
+      IconButton(onClick = {
+        navController.navigate(NavigationScreens.CALENDAR_SCREEN.name)
+      }) {
         Icon(painter = painterResource(R.drawable.ic_calendar_24), contentDescription = "calendar")
       }
     }
-    WeekCalendar(scheduleViewModel = scheduleViewModel)
+    WeekCalendar(
+      currentSelectedDate = currentSelectedDate,
+      scheduleViewModel = scheduleViewModel
+    )
 
     Column(modifier = Modifier.padding(top = 16.dp)) {
       Row(
@@ -224,11 +242,13 @@ fun AvailableTimesList(availabilities: List<ApiAvailabilityResponse>) {
 @Preview(showBackground = true)
 @Composable
 private fun ScheduleScreenPreview() {
+  val selectedDate = ""
+  val navController = rememberNavController()
   val apiAvailabilityServiceMock = ApiAvailabilityServiceMock()
   val apiProfessionalServiceMock = ApiProfessionalServiceMock()
   val scheduleViewmodel = ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock)
 
   BarbershopApplicationTheme {
-    ScheduleScreen(scheduleViewmodel)
+    ScheduleScreen(selectedDate, navController, scheduleViewmodel)
   }
 }

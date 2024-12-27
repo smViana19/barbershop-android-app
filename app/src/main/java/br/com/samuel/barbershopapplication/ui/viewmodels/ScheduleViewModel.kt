@@ -51,13 +51,6 @@ class ScheduleViewModel @Inject constructor(
         val response = apiAvailabilityService.getAvailabilitiesByProfessionalId(professionalId)
         _availabilities.value = response
         filteredDate(_selectedDate.value)
-        //        when (response.code()) {
-        //          200 -> {
-        //
-        //          }
-        //        }
-
-
       } catch (e: Exception) {
         e.printStackTrace()
       }
@@ -70,7 +63,7 @@ class ScheduleViewModel @Inject constructor(
 
   }
 
-  private fun filteredDate(date: String?) {
+  fun filteredDate(date: String?) {
     filteredAvailabilities.value = if (date != null) {
       _availabilities.value.filter { it.date == date }
     } else {
