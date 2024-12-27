@@ -45,11 +45,7 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServ
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
-import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
-import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
-import br.com.samuel.barbershopapplication.ui.viewmodels.ServicesViewModel
-import br.com.samuel.barbershopapplication.ui.viewmodels.SpecialtyViewModel
 import br.com.samuel.barbershopapplication.utils.formatCurrency
 
 @Composable
