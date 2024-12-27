@@ -21,9 +21,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.ui.components.DayMonth
 import br.com.samuel.barbershopapplication.ui.components.DaysOfWeekTitle
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import com.kizitonwose.calendar.compose.VerticalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
@@ -35,10 +38,12 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun CalendarScreen() {
+fun CalendarScreen(
+  navController: NavController
+) {
 
   val currentMonth = remember { YearMonth.now() }
-  val startMonth = remember { currentMonth.minusMonths(12) }
+  val startMonth = remember { currentMonth.minusMonths(1) }
   val endMonth = remember { currentMonth.plusMonths(12) }
   val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
   val daysOfWeek = remember { daysOfWeek() }
@@ -66,13 +71,14 @@ fun CalendarScreen() {
     ) {
       IconButton(
         modifier = Modifier,
-        onClick = {},
+        onClick = {
+          navController.popBackStack()
+        },
       ) {
         Icon(painter = painterResource(R.drawable.ic_back_24), contentDescription = "back")
       }
     }
     VerticalCalendar(
-
       state = state,
       dayContent = { day ->
         DayMonth(
@@ -81,6 +87,8 @@ fun CalendarScreen() {
           calendarState = state,
           onClick = { clickableDate ->
             selectedDate = clickableDate
+            val formattedDate = clickableDate.toString()
+            navController.navigate("${NavigationScreens.SCHEDULE_SCREEN.name}/$formattedDate")
           }
         )
       },
@@ -109,5 +117,6 @@ fun CalendarScreen() {
 @Preview(showBackground = true)
 @Composable
 private fun CalendarScreenPreview() {
-  CalendarScreen()
+  val navController = rememberNavController()
+  CalendarScreen(navController)
 }
