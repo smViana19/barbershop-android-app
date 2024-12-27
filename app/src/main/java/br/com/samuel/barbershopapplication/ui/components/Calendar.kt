@@ -49,11 +49,11 @@ fun Calendar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WeekCalendar(scheduleViewModel: ScheduleViewModel) {
-  val currentDate = remember { LocalDate.now() }
+fun WeekCalendar(currentSelectedDate: LocalDate, scheduleViewModel: ScheduleViewModel) {
+  val currentDate = remember { currentSelectedDate }
   val currentMonth = remember { YearMonth.now() }
-  val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() }
-  val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() }
+  val startDate = remember { currentMonth.minusMonths(1).atStartOfMonth() }
+  val endDate = remember { currentMonth.plusMonths(12).atEndOfMonth() }
   val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
   val daysOfWeek = remember { daysOfWeek() }
   val state = rememberWeekCalendarState(
@@ -62,7 +62,7 @@ fun WeekCalendar(scheduleViewModel: ScheduleViewModel) {
     firstVisibleWeekDate = currentDate,
     firstDayOfWeek = daysOfWeek.first()
   )
-  var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
+  var selectedDate by remember { mutableStateOf(currentSelectedDate) }
   DaysOfWeekTitle(daysOfWeek = daysOfWeek)
   WeekCalendar(
     state = state,
@@ -73,7 +73,8 @@ fun WeekCalendar(scheduleViewModel: ScheduleViewModel) {
         onClick = { clickableDate ->
           selectedDate = clickableDate
           println("dia selecionado: $clickableDate")
-          scheduleViewModel.selectDate(clickableDate.toString())
+          println("selectedDate: $selectedDate")
+          scheduleViewModel.selectDate(selectedDate.toString())
         })
     }
   )
