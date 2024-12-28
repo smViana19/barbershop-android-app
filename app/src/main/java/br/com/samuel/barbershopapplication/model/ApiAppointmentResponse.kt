@@ -21,4 +21,7 @@ data class ApiAppointmentResponse (
     val service: ApiServiceResponse,
     @SerializedName("professional")
     val professional: ApiProfessionalResponse,
+    @SerializedName("details")
+    val details: String?,
+    // TODO: LEMBRAR DE RESOLVER O STATUS DA REQUEST COM O STATUS DO AGENDAMENTO
 )

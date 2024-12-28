@@ -5,5 +5,5 @@ data class ApiAppointmentRequest (
     val professionalId: Int,
     val serviceId: Int,
     val availabilityId: Int,
-    val status: String,
+    val details: String?
 )
