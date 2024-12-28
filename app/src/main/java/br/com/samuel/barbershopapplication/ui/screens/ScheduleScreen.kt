@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.R
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAppointmentServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAvailabilityServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiProfessionalServiceMock
 import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
@@ -47,7 +48,6 @@ import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
-import br.com.samuel.barbershopapplication.ui.viewmodels.AvailabilityViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ProfessionalViewModel
 import br.com.samuel.barbershopapplication.ui.viewmodels.ScheduleViewModel
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -112,7 +112,9 @@ fun ScheduleScreen(
       verticalAlignment = Alignment.CenterVertically
     ) {
       IconButton(
-        onClick = {},
+        onClick = {
+          navController.popBackStack()
+        },
       ) {
         Icon(painter = painterResource(R.drawable.ic_back_24), contentDescription = "back")
       }
@@ -247,8 +249,10 @@ private fun ScheduleScreenPreview() {
   val serviceId = 1
   val navController = rememberNavController()
   val apiAvailabilityServiceMock = ApiAvailabilityServiceMock()
+  val apiAppointmentService = ApiAppointmentServiceMock()
   val apiProfessionalServiceMock = ApiProfessionalServiceMock()
-  val scheduleViewmodel = ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock)
+  val scheduleViewmodel =
+    ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock, apiAppointmentService)
 
   BarbershopApplicationTheme {
     ScheduleScreen(selectedDate, serviceId, navController, scheduleViewmodel)

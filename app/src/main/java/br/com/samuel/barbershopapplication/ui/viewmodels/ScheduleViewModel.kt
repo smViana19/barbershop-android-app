@@ -4,8 +4,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.samuel.barbershopapplication.backendservices.api.ApiAppointmentService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiAvailabilityService
 import br.com.samuel.barbershopapplication.backendservices.api.ApiProfessionalService
+import br.com.samuel.barbershopapplication.model.ApiAppointmentRequest
 import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
   private val apiAvailabilityService: ApiAvailabilityService,
-  private val apiProfessionalService: ApiProfessionalService
+  private val apiProfessionalService: ApiProfessionalService,
+  private val apiAppointmentService: ApiAppointmentService
 
 ) : ViewModel() {
   private val _professionals = mutableStateOf<List<ApiProfessionalResponse>>(emptyList())
@@ -29,6 +32,27 @@ class ScheduleViewModel @Inject constructor(
   val selectedDate: MutableState<String> = _selectedDate
 
   val filteredAvailabilities = MutableStateFlow<List<ApiAvailabilityResponse>>(emptyList())
+
+
+  fun createAppointment(
+    userId: Int,
+    professionalId: Int,
+    serviceId: Int,
+    availabilityId: Int,
+    details: String?
+  ) {
+    viewModelScope.launch {
+      val apiAppointmentRequest =
+        ApiAppointmentRequest(userId, professionalId, serviceId, availabilityId, details)
+      try {
+        val response = apiAppointmentService.createAppointment(apiAppointmentRequest)
+
+      } catch (e: Exception) {
+        e.printStackTrace()
+      }
+    }
+  }
+
 
   fun getAllProfessionals() {
     viewModelScope.launch {
