@@ -43,79 +43,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.com.samuel.barbershopapplication.R
+import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
+import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
+import br.com.samuel.barbershopapplication.model.ApiServiceResponse
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.theme.LightOnSecondary
 import br.com.samuel.barbershopapplication.ui.theme.LightPrimary
 import br.com.samuel.barbershopapplication.ui.theme.LightPrimaryVariant
+import br.com.samuel.barbershopapplication.ui.viewmodels.ScheduleViewModel
+import br.com.samuel.barbershopapplication.utils.formatCurrency
 import kotlinx.coroutines.launch
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AppBottomSheetScreen(modifier: Modifier = Modifier) {
-  val sheetState = rememberModalBottomSheetState(
-    skipPartiallyExpanded = true,
-    confirmValueChange = { true }
-  )
-  val scope = rememberCoroutineScope()
-  var showBottomSheet by remember { mutableStateOf(false) }
-
-  Scaffold(
-    modifier = Modifier
-      .fillMaxSize(),
-    floatingActionButton = {
-      ExtendedFloatingActionButton(
-        text = { Text("Show bottom sheet") },
-        icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-        onClick = {
-          showBottomSheet = true
-        }
-      )
-    },
-    content = { innerPadding ->
-      Box(
-        modifier = Modifier
-          .fillMaxSize()
-          .padding(innerPadding)
-      ) {
-        if (showBottomSheet) {
-          ModalBottomSheet(
-            onDismissRequest = {
-              showBottomSheet = false
-            },
-            sheetState = sheetState,
-            containerColor = Color.White,
-            dragHandle = {
-              Spacer(
-                modifier = Modifier
-                  .padding(bottom = 24.dp, top = 8.dp)
-                  .height(3.dp)
-                  .width(38.dp)
-                  .clip(CircleShape)
-                  .background(Color(0xFFE0E0E0))
-              )
-            },
-          ) {
-            AppBottomSheet(
-              onDismiss = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                  if (!sheetState.isVisible) {
-                    showBottomSheet = false
-                  }
-                }
-              }
-            )
-          }
-        }
-      }
-    }
-  )
-}
 
 @Composable
 fun AppBottomSheet(
   modifier: Modifier = Modifier,
-  onDismiss: () -> Unit
+  onDismiss: () -> Unit,
+  navController: NavController,
+  userId: Int,
+  professionalId: Int,
+  serviceId: Int,
+  availabilityId: Int,
+  scheduleViewModel: ScheduleViewModel
+  //TODO: data selecionada
 ) {
   Column(
     modifier = Modifier
@@ -222,7 +174,8 @@ fun AppBottomSheet(
               )
               Text(
                 modifier = Modifier.padding(start = 4.dp),
-                text = "Samuel",
+//                text = "Samuel",
+                text = "samuca",
                 style = TextStyle(
                   fontSize = 12.sp,
                   lineHeight = 24.sp,
@@ -237,7 +190,8 @@ fun AppBottomSheet(
               horizontalArrangement = Arrangement.SpaceBetween
             ) {
               Text(
-                text = "R$30,00",
+//                text = "R$ ${service?.price?.formatCurrency()}",
+                text = "R$ 30,00",
                 style = TextStyle(
                   fontSize = 12.sp,
                   lineHeight = 24.sp,
@@ -245,7 +199,7 @@ fun AppBottomSheet(
                 )
               )
               Text(
-                text = "20:00 - 20:30",
+                text = "20:00 - 20:30", //TODO: AJUSTAR NO BACKEND
                 style = TextStyle(
                   fontSize = 12.sp,
                   lineHeight = 24.sp,
@@ -275,6 +229,9 @@ fun AppBottomSheet(
                   bottomEnd = 0.dp
                 )
               )
+              .clickable() {
+                navController.navigate(NavigationScreens.HOME_SCREEN.name)
+              }
               .background(Color(LightPrimary.value))
               .padding(horizontal = 8.dp, vertical = 4.dp)
           ) {
@@ -335,7 +292,16 @@ fun AppBottomSheet(
     }
     Button(
       modifier = Modifier.fillMaxWidth(),
-      onClick = {},
+      onClick = {
+        scheduleViewModel.createAppointment(
+          userId,
+          professionalId,
+          serviceId,
+          availabilityId,
+          details = ""
+        )
+        onDismiss()
+      },
       shape = RoundedCornerShape(8.dp)
     ) {
       Text(text = "Confirmar e agendar")
@@ -350,6 +316,6 @@ private fun AppBottomSheetSPreview() {
   BarbershopApplicationTheme {
 
 //    AppBottomSheetS()
-    AppBottomSheet(onDismiss = {})
+//    AppBottomSheet(onDismiss = {})
   }
 }

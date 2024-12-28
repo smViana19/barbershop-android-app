@@ -64,6 +64,7 @@ fun HomeScreen(
   val isLoggedIn = homeViewModel.isLoggedIn
   LaunchedEffect(selectedTabIndex) {
     homeViewModel.verifyIsUserLoggedIn(navController = navController) //TODO: CRIAR OUTRO LAUCHED
+    println("isLoggedIn: $isLoggedIn")
     when (selectedTabIndex) {
       0 -> if (homeViewModel.serviceData.value.isEmpty()) homeViewModel.getAllServices()
       1 -> if (homeViewModel.professionals.value.isEmpty()) homeViewModel.getAllProfessionals()

@@ -88,7 +88,7 @@ fun CalendarScreen(
           onClick = { clickableDate ->
             selectedDate = clickableDate
             val formattedDate = clickableDate.toString()
-            navController.navigate("${NavigationScreens.SCHEDULE_SCREEN.name}/$formattedDate")
+            navController.navigate("${NavigationScreens.SCHEDULE_SCREEN.name}?selectedDate=$formattedDate")
           }
         )
       },
