@@ -7,6 +7,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppointmentViewModel @Inject constructor(
-  private val apiAppointmentResponse: ApiAppointmentResponse
 ): ViewModel() {
 }
