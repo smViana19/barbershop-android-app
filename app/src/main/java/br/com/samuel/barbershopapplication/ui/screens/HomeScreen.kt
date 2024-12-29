@@ -45,6 +45,7 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServ
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
+import br.com.samuel.barbershopapplication.ui.components.ListSkeletonLoader
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
@@ -62,6 +63,7 @@ fun HomeScreen(
   val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
   var selectedTabIndex by remember { mutableIntStateOf(0) }
   val isLoggedIn = homeViewModel.isLoggedIn
+
   LaunchedEffect(selectedTabIndex) {
     homeViewModel.verifyIsUserLoggedIn(navController = navController) //TODO: CRIAR OUTRO LAUCHED
     println("isLoggedIn: $isLoggedIn")
@@ -121,6 +123,9 @@ fun HomeScreen(
 
     }
     Spacer(modifier = Modifier.padding(top = 16.dp))
+    if(homeViewModel.isLoading.value) {
+      ListSkeletonLoader()
+    }
     Column(modifier = Modifier.padding()) {
       when (selectedTabIndex) {
         0 -> ServicesTab(services = servicesData.value, navController = navController)

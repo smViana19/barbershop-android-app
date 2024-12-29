@@ -35,18 +35,19 @@ class HomeViewModel @Inject constructor(
   private val _specialties = mutableStateOf<List<ApiSpecialtyResponse>>(emptyList())
   val specialties: MutableState<List<ApiSpecialtyResponse>> = _specialties
 
+  private val _isLoading = mutableStateOf(false)
+  val isLoading: MutableState<Boolean> = _isLoading
 
   fun getAllProfessionals() {
     viewModelScope.launch {
       try {
+        _isLoading.value = true
         val response = apiProfessionalService.getAllProfessionals()
         _professionals.value = response
-        for (res in response) {
-          println(res.user.name)
-        }
-        println("_professionals: $_professionals")
       } catch (e: Exception) {
         e.printStackTrace()
+      } finally {
+        _isLoading.value = false
       }
     }
   }
@@ -54,10 +55,14 @@ class HomeViewModel @Inject constructor(
   fun getAllServices() {
     viewModelScope.launch {
       try {
+        _isLoading.value = true
         val response = apiServiceService.getAllServices()
         _serviceData.value = response
+        _isLoading.value = false
       } catch (e: Exception) {
         e.printStackTrace()
+      } finally {
+        _isLoading.value = false
       }
     }
   }
@@ -65,21 +70,28 @@ class HomeViewModel @Inject constructor(
   fun getAllSpecialties() {
     viewModelScope.launch {
       try {
+        _isLoading.value = true
         val response = apiSpecialtyService.getAllSpecialties()
         _specialties.value = response
+        _isLoading.value = false
       } catch (e: Exception) {
         e.printStackTrace()
       }
+       finally {
+         _isLoading.value = false
+       }
     }
   }
 
   fun verifyIsUserLoggedIn(navController: NavController) {
+    _isLoading.value = true
     val token = sharedPrefsService.isLoggedIn()
     if (!token) {
       navController.navigate(NavigationScreens.LOGIN_SCREEN.name)
     } else {
       _isLoggedIn.value = true
+      _isLoading.value = false
     }
-
+    _isLoading.value = false
   }
 }
