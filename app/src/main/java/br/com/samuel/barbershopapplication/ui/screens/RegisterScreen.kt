@@ -44,6 +44,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiUserServiceMock
+import br.com.samuel.barbershopapplication.ui.components.AppLoading
+import br.com.samuel.barbershopapplication.ui.dialogs.CustomDialog
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.RegisterViewModel
 
@@ -214,6 +216,10 @@ fun RegisterScreen(
         }
       }
     }
+    if(registerViewModel.isLoading.value) {
+      AppLoading()
+    }
+    CustomDialog(state = registerViewModel.dialogState.value)
   }
 
 }
