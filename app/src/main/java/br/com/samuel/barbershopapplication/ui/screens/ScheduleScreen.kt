@@ -1,6 +1,5 @@
 package br.com.samuel.barbershopapplication.ui.screens
 
-import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,10 +48,11 @@ import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAppointmentServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAvailabilityServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiProfessionalServiceMock
+import br.com.samuel.barbershopapplication.backendservices.mocks.ApiServiceServiceMock
+import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServiceMock
 import br.com.samuel.barbershopapplication.backendservices.sharedprefs.SharedPrefsService
 import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
-import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.ui.components.AppBottomSheet
 import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
@@ -71,11 +71,13 @@ import java.util.Locale
 @Composable
 fun ScheduleScreen(
   selectedDate: String,
-  serviceId: Int, //TODO: ADICIONAR PARA CRIAR O AGENDAMENTO (BOTTOM SHEETS)
+  serviceId: Int,
   navController: NavController,
-//  sharedPrefs: SharedPrefsService,
+  sharedPrefs: SharedPrefsService,
   scheduleViewModel: ScheduleViewModel = hiltViewModel()
 ) {
+
+  val userId = sharedPrefs.getUserId()
   val professionals = scheduleViewModel.professionals
   var professionalIdToAllComponents by remember { mutableIntStateOf(-1) }
   var availabilityIdToAllComponents by remember { mutableIntStateOf(-1) }
@@ -109,6 +111,12 @@ fun ScheduleScreen(
   LaunchedEffect(selectedDate) {
     scheduleViewModel.filteredDate(selectedDate)
   }
+
+  LaunchedEffect(professionalIdToAllComponents) {
+    scheduleViewModel.getServiceById(serviceId)
+    scheduleViewModel.getProfessionalById(professionalIdToAllComponents)
+  }
+
 
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -164,7 +172,6 @@ fun ScheduleScreen(
         onClick = { professionalId ->
           scheduleViewModel.getAvailabilitiesByProfessionalId(professionalId)
           professionalIdToAllComponents = professionalId
-          println("professionalIdToAllComponents: $professionalIdToAllComponents")
         }
       )
       HorizontalDivider()
@@ -172,7 +179,7 @@ fun ScheduleScreen(
     AvailableTimesList(
       availabilities = availabilities,
       navController = navController,
-      userId = 17, //TODO: SO PRA TESTE
+      userId = userId, //TODO: SO PRA TESTE
       serviceId = serviceId,
       professionalId = professionalIdToAllComponents,
       onClick = { availabilityId ->
@@ -202,7 +209,6 @@ fun ProfessionalList(professionals: List<ApiProfessionalResponse>, onClick: (Int
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
           Box(
-            //TODO: COLOCAR A IMAGEM DO PROFISSIONAL
             modifier = Modifier
               .size(50.dp)
               .clip(CircleShape)
@@ -229,9 +235,6 @@ fun AvailableTimesList(
   onClick: (Int) -> Unit,
   professionalId: Int,
   availabilityId: Int,
-//  service: ApiServiceResponse?,
-//  professional: ApiProfessionalResponse?,
-//  availability: ApiAvailabilityResponse?,
   scheduleViewModel: ScheduleViewModel
 ) {
   if (availabilities.isEmpty()) {
@@ -339,12 +342,20 @@ private fun ScheduleScreenPreview() {
   val serviceId = 1
   val navController = rememberNavController()
   val apiAvailabilityServiceMock = ApiAvailabilityServiceMock()
+  val sharedPrefsServiceMock = SharedPrefsServiceMock()
   val apiAppointmentService = ApiAppointmentServiceMock()
   val apiProfessionalServiceMock = ApiProfessionalServiceMock()
+  val apiServiceServiceMock = ApiServiceServiceMock()
   val scheduleViewmodel =
-    ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock, apiAppointmentService)
+    ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock, apiAppointmentService, apiServiceServiceMock)
 
   BarbershopApplicationTheme {
-    ScheduleScreen(selectedDate, serviceId, navController, scheduleViewmodel)
+    ScheduleScreen(
+      selectedDate,
+      serviceId,
+      navController,
+      sharedPrefsServiceMock,
+      scheduleViewmodel
+    )
   }
 }

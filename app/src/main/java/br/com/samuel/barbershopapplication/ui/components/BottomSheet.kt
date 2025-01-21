@@ -126,7 +126,7 @@ fun AppBottomSheet(
                 modifier = Modifier.weight(1f)
               ) {
                 Text(
-                  text = "Corte de cabelo",
+                  text = scheduleViewModel.serviceName.value,
                   style = TextStyle(
                     fontSize = 20.sp,
                     lineHeight = 24.sp,
@@ -174,8 +174,7 @@ fun AppBottomSheet(
               )
               Text(
                 modifier = Modifier.padding(start = 4.dp),
-//                text = "Samuel",
-                text = "samuca",
+                text = scheduleViewModel.professionalName.value,
                 style = TextStyle(
                   fontSize = 12.sp,
                   lineHeight = 24.sp,
@@ -191,7 +190,7 @@ fun AppBottomSheet(
             ) {
               Text(
 //                text = "R$ ${service?.price?.formatCurrency()}",
-                text = "R$ 30,00",
+                text = "R$ ${scheduleViewModel.servicePrice.value.formatCurrency()}",
                 style = TextStyle(
                   fontSize = 12.sp,
                   lineHeight = 24.sp,
