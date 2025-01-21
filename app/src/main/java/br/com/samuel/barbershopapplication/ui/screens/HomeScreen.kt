@@ -55,7 +55,6 @@ import br.com.samuel.barbershopapplication.utils.formatCurrency
 fun HomeScreen(
   homeViewModel: HomeViewModel = hiltViewModel(),
   navController: NavController
-
 ) {
   val servicesData = homeViewModel.serviceData
   val professionals = homeViewModel.professionals
@@ -237,7 +236,6 @@ fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController
         color = Color.LightGray,
         thickness = 1.dp
       )
-
     }
   }
 }
