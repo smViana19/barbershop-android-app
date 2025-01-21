@@ -1,6 +1,7 @@
 package br.com.samuel.barbershopapplication.ui.viewmodels
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,6 @@ import br.com.samuel.barbershopapplication.backendservices.api.ApiServiceService
 import br.com.samuel.barbershopapplication.model.ApiAppointmentRequest
 import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
-import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -21,30 +21,26 @@ import javax.inject.Inject
 class ScheduleViewModel @Inject constructor(
   private val apiAvailabilityService: ApiAvailabilityService,
   private val apiProfessionalService: ApiProfessionalService,
-  private val apiAppointmentService: ApiAppointmentService
+  private val apiAppointmentService: ApiAppointmentService,
+  private val apiServiceService: ApiServiceService
 
 ) : ViewModel() {
-  private val _services = mutableStateOf<ApiServiceResponse?>(null)
-  val services: MutableState<ApiServiceResponse?> = _services
-//  private val _services = mutableStateOf<List<ApiProfessionalResponse>>(emptyList())
-//  val services: MutableState<List<ApiProfessionalResponse>> = _services
 
-  //ISSO PARA A VERSAO TESTE DPS MELHORAR
-  private val _professionalsToConfirmAppointment = mutableStateOf<ApiProfessionalResponse?>(null)
-  val professionalsToConfirmAppointment: MutableState<ApiProfessionalResponse?> = _professionalsToConfirmAppointment
+  private val _serviceName = mutableStateOf("")
+  val serviceName: MutableState<String> = _serviceName
+
+  private val _professionalName = mutableStateOf("")
+  val professionalName: MutableState<String> = _professionalName
+
+  private val _servicePrice = mutableDoubleStateOf(0.0)
+  val servicePrice: MutableState<Double> = _servicePrice
 
   private val _professionals = mutableStateOf<List<ApiProfessionalResponse>>(emptyList())
   val professionals: MutableState<List<ApiProfessionalResponse>> = _professionals
 
-  private val _availabilities = mutableStateOf<List<ApiAvailabilityResponse>>(emptyList())
-  val availabilities: MutableState<List<ApiAvailabilityResponse>> = _availabilities
-
-  private val _selectedDate = mutableStateOf("")
-  val selectedDate: MutableState<String> = _selectedDate
-
   val filteredAvailabilities = MutableStateFlow<List<ApiAvailabilityResponse>>(emptyList())
-  val filteredAvailabilitiesToConfirmAppointment = MutableStateFlow<ApiAvailabilityResponse?>(null)
-
+  private val _availabilities = mutableStateOf<List<ApiAvailabilityResponse>>(emptyList())
+  private val _selectedDate = mutableStateOf("")
 
   fun createAppointment(
     userId: Int,
@@ -65,6 +61,18 @@ class ScheduleViewModel @Inject constructor(
     }
   }
 
+  fun getServiceById(serviceId: Int) {
+    viewModelScope.launch {
+      try {
+        val service = apiServiceService.getServiceById(serviceId)
+        _serviceName.value = service.name
+        _servicePrice.doubleValue = service.price
+      } catch (e: Exception) {
+        e.printStackTrace()
+      }
+    }
+  }
+
 
   fun getAllProfessionals() {
     viewModelScope.launch {
@@ -75,6 +83,17 @@ class ScheduleViewModel @Inject constructor(
           println(res.user.name)
         }
         println("_professionals: $_professionals")
+      } catch (e: Exception) {
+        e.printStackTrace()
+      }
+    }
+  }
+
+  fun getProfessionalById(professionalId: Int) {
+    viewModelScope.launch{
+      try {
+        val professional = apiProfessionalService.getProfessionalById(professionalId)
+        _professionalName.value = professional.user.name
       } catch (e: Exception) {
         e.printStackTrace()
       }
@@ -106,7 +125,6 @@ class ScheduleViewModel @Inject constructor(
       _availabilities.value
     }
   }
-
 
 
 }
