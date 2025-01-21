@@ -5,15 +5,18 @@ import br.com.samuel.barbershopapplication.model.ApiUserRequest
 
 class SharedPrefsServiceMock: SharedPrefsService {
   override fun saveUserData(
+    id: Int,
     name: String,
     email: String,
-    password: String,
-    role: String
   ) {
     TODO("Not yet implemented")
   }
 
   override fun getUserData(): ApiUserRequest {
+    TODO("Not yet implemented")
+  }
+
+  override fun getUserId(): Int {
     TODO("Not yet implemented")
   }
 

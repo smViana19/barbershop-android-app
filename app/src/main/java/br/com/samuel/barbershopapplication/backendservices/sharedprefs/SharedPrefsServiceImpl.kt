@@ -4,44 +4,49 @@ import android.content.Context
 import br.com.samuel.barbershopapplication.model.ApiUserRequest
 
 class SharedPrefsServiceImpl(context: Context) : SharedPrefsService{
-    private val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    private val tokenPreferences = context.getSharedPreferences("token_prefs", Context.MODE_PRIVATE)
+    private val userPreferences = context.getSharedPreferences("user_data_prefs", Context.MODE_PRIVATE)
     override fun saveUserData(
+        id: Int,
         name: String,
         email: String,
-        password: String,
-        role: String
     ) {
-        sharedPreferences.edit().apply {
+        userPreferences.edit().apply {
+            putInt("user_id", id)
             putString("user_name", name)
             putString("user_email", email)
-            putString("user_password", password)
-            putString("user_role", role)
             apply()
         }
     }
 
     override fun getUserData(): ApiUserRequest {
-        val name = sharedPreferences.getString("user_name", "") ?: ""
-        val email = sharedPreferences.getString("user_email", "") ?: ""
-        val password = sharedPreferences.getString("user_password", "") ?: ""
-        val role = sharedPreferences.getString("user_role", "") ?: ""
+
+        val name = tokenPreferences.getString("user_name", "") ?: ""
+        val email = tokenPreferences.getString("user_email", "") ?: ""
+        val password = tokenPreferences.getString("user_password", "") ?: ""
+        val role = tokenPreferences.getString("user_role", "") ?: ""
         return ApiUserRequest(name, email, password)
     }
 
+    override fun getUserId(): Int {
+        val id = userPreferences.getInt("user_id", 0)
+        return id
+    }
+
     override fun saveAuthToken(token: String) {
-        sharedPreferences.edit().apply {
+        tokenPreferences.edit().apply {
             putString("auth_token", token)
             apply()
         }
     }
 
     override fun isLoggedIn(): Boolean {
-        val token = sharedPreferences.getString("auth_token", null)
+        val token = tokenPreferences.getString("auth_token", null)
         return !token.isNullOrEmpty()
     }
 
     override fun clearAuthToken() {
-        sharedPreferences.edit().apply {
+        tokenPreferences.edit().apply {
             remove("auth_token")
             apply()
         }
