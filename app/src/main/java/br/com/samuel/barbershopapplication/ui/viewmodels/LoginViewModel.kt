@@ -41,8 +41,12 @@ class LoginViewModel @Inject constructor(
         //TODO: MELHORAR A RESPOSTA PARA O ERRO
         if (response.isSuccessful) {
           val token = response.body()?.token
+          val userId = response.body()!!.id
+          val name = response.body()?.name.toString()
+          val email = response.body()?.email.toString()
           if (token != null) {
             sharedPrefsService.saveAuthToken(token)
+            sharedPrefsService.saveUserData(userId, name, email)
           }
           navController.navigate(NavigationScreens.HOME_SCREEN.name)
         } else {

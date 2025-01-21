@@ -6,27 +6,28 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imeNestedScroll
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -38,16 +39,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.samuel.barbershopapplication.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAuthServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServiceMock
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.LoginViewModel
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LoginScreen(
   loginViewModel: LoginViewModel = hiltViewModel(),
@@ -65,6 +67,7 @@ fun LoginScreen(
           focusManager.clearFocus()
         })
       }
+      .imePadding()
   ) {
     Column(
       modifier = Modifier
@@ -74,7 +77,8 @@ fun LoginScreen(
           detectTapGestures(onTap = {
             focusManager.clearFocus()
           })
-        },
+        }
+        .imeNestedScroll(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center
     ) {
