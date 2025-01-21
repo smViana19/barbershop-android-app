@@ -9,5 +9,5 @@ interface ApiServiceService {
     suspend fun getAllServices(): List<ApiServiceResponse>
 
     @GET("/services/{serviceId}")
-    suspend fun getServiceById(@Path("serviceId") serviceId: Int): List<ApiServiceResponse>
+    suspend fun getServiceById(@Path("serviceId") serviceId: Int): ApiServiceResponse
 }
