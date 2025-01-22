@@ -133,7 +133,7 @@ fun ScheduleScreen(
     ) {
       IconButton(
         onClick = {
-          navController.popBackStack()
+          navController.navigate(NavigationScreens.HOME_SCREEN.name)
         },
       ) {
         Icon(painter = painterResource(R.drawable.ic_back_24), contentDescription = "back")
@@ -145,7 +145,9 @@ fun ScheduleScreen(
         ) + " " + visibleMonth.year
       )
       IconButton(onClick = {
-        navController.navigate(NavigationScreens.CALENDAR_SCREEN.name)
+        navController.navigate(NavigationScreens.CALENDAR_SCREEN.name) {
+          launchSingleTop = true
+        }
       }) {
         Icon(painter = painterResource(R.drawable.ic_calendar_24), contentDescription = "calendar")
       }
@@ -272,7 +274,7 @@ fun AvailableTimesList(
           shadowElevation = 4.dp,
           modifier = Modifier
             .padding(8.dp)
-            .clickable() {
+            .clickable {
               onClick(availableTime.id)
               showBottomSheet = true
             }
@@ -291,7 +293,7 @@ fun AvailableTimesList(
           Box(
             modifier = Modifier
               .fillMaxSize()
-              .padding(16.dp) //MELHORAR DPS
+              .padding(16.dp)
           ) {
             if (showBottomSheet) {
               ModalBottomSheet(

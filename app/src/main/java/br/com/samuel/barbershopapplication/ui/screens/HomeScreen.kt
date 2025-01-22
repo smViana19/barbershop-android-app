@@ -1,5 +1,6 @@
 package br.com.samuel.barbershopapplication.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,14 +17,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -45,32 +53,56 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServ
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
+import br.com.samuel.barbershopapplication.ui.components.AppButton
 import br.com.samuel.barbershopapplication.ui.components.ListSkeletonLoader
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
 import br.com.samuel.barbershopapplication.utils.formatCurrency
+import kotlinx.coroutines.delay
+import kotlin.system.exitProcess
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
   homeViewModel: HomeViewModel = hiltViewModel(),
   navController: NavController
 ) {
+  var showExitDialog by remember { mutableStateOf(false) }
   val servicesData = homeViewModel.serviceData
   val professionals = homeViewModel.professionals
   val specialties = homeViewModel.specialties
   val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
   var selectedTabIndex by remember { mutableIntStateOf(0) }
-  val isLoggedIn = homeViewModel.isLoggedIn
-
   LaunchedEffect(selectedTabIndex) {
-    homeViewModel.verifyIsUserLoggedIn(navController = navController) //TODO: CRIAR OUTRO LAUCHED
-    println("isLoggedIn: $isLoggedIn")
+    homeViewModel.verifyIsUserLoggedIn(navController = navController)
     when (selectedTabIndex) {
       0 -> if (homeViewModel.serviceData.value.isEmpty()) homeViewModel.getAllServices()
       1 -> if (homeViewModel.professionals.value.isEmpty()) homeViewModel.getAllProfessionals()
       2 -> if (homeViewModel.specialties.value.isEmpty()) homeViewModel.getAllSpecialties()
     }
+  }
+
+  BackHandler {
+    showExitDialog = true
+  }
+
+  if (showExitDialog) {
+    AlertDialog(
+      onDismissRequest = { showExitDialog = false },
+      title = { Text("Sair") },
+      text = { Text("Tem certeza que deseja sair do aplicativo?") },
+      confirmButton = {
+        TextButton(onClick = { showExitDialog = false }) {
+          Text("Cancelar")
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = { exitProcess(0) }) {
+          Text("Sair")
+        }
+      }
+    )
   }
 
   Column(
@@ -122,7 +154,7 @@ fun HomeScreen(
 
     }
     Spacer(modifier = Modifier.padding(top = 16.dp))
-    if(homeViewModel.isLoading.value) {
+    if (homeViewModel.isLoading.value) {
       ListSkeletonLoader()
     }
     Column(modifier = Modifier.padding()) {
@@ -138,6 +170,7 @@ fun HomeScreen(
 
 @Composable
 fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController) {
+
   Row(
     modifier = Modifier
       .fillMaxWidth()
