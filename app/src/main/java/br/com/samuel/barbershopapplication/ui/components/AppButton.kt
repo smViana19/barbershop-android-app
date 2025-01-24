@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -43,7 +45,8 @@ fun AppButton(
   modifier: Modifier = Modifier,
   onClick: () -> Unit,
   isLoading: Boolean = false,
-  text: String,
+  text: String? = null,
+  icon: (@Composable (() -> Unit))? = null,
   leadingIcon: (@Composable (() -> Unit))? = null,
   trailingIcon: (@Composable (() -> Unit))? = null,
   textColor: Color = Color.White,
@@ -97,14 +100,22 @@ fun AppButton(
           leadingIcon()
           Spacer(modifier = Modifier.width(iconSpacing))
         }
-        Text(
-          text = text,
-          color = textColor,
-          fontSize = fontSize,
-          fontStyle = fontStyle,
-          fontWeight = fontWeight,
-          fontFamily = fontFamily
-        )
+        when {
+          text != null -> {
+            Text(
+              text = text,
+              color = textColor,
+              fontSize = fontSize,
+              fontStyle = fontStyle,
+              fontWeight = fontWeight,
+              fontFamily = fontFamily
+            )
+          }
+
+          icon != null -> {
+            icon()
+          }
+        }
         if (trailingIcon != null) {
           Spacer(modifier = Modifier.width(iconSpacing))
           trailingIcon()
@@ -115,20 +126,57 @@ fun AppButton(
   }
 }
 
-@Preview()
+@Preview(showBackground = true)
 @Composable
 private fun AppButtonPreview() {
   AppTheme {
     var isLoading by remember { mutableStateOf(false) }
-
     AppButton(
       onClick = {},
       text = "Botao simples",
       isLoading = isLoading,
-      trailingIcon = {
-        Icon(painter = painterResource(R.drawable.ic_camera_24), contentDescription = "")
-      }
+    )
+  }
+}
 
+@Preview(showBackground = true)
+@Composable
+private fun AppButtonLoadingPreview() {
+  AppTheme {
+    AppButton(
+      onClick = {},
+    )
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AppButtonTrailingIconPreview() {
+  AppTheme {
+    AppButton(
+      onClick = {},
+    )
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AppButtonLeadingIconPreview() {
+  AppTheme {
+    AppButton(
+      onClick = {},
+    )
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AppButtonIconPreview() {
+  AppTheme {
+    AppButton(
+      onClick = {},
+      icon = {
+        Icon(Icons.Default.Star, contentDescription = "Favorito") },
     )
   }
 }
