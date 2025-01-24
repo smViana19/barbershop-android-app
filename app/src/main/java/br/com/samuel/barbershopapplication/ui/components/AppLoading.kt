@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 
 @Composable
 fun AppLoading() {
@@ -44,7 +44,7 @@ fun AppLoading() {
 @Preview(showBackground = true)
 @Composable
 private fun AppLoadingPreview() {
-  BarbershopApplicationTheme {
+  AppTheme {
     AppLoading()
   }
 }

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,7 +47,7 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.ApiAuthServiceM
 import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServiceMock
 import br.com.samuel.barbershopapplication.ui.components.AppButton
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
-import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.LoginViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -220,7 +219,7 @@ private fun LoginScreenPreview() {
   val sharedPrefsServiceMock = SharedPrefsServiceMock()
   val loginViewModel = LoginViewModel(apiAuthServiceMock, sharedPrefsServiceMock)
   val navController = rememberNavController()
-  BarbershopApplicationTheme {
+  AppTheme {
     LoginScreen(loginViewModel, navController)
   }
 

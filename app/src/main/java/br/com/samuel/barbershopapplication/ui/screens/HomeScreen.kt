@@ -59,7 +59,7 @@ import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
 import br.com.samuel.barbershopapplication.ui.components.ListSkeletonLoader
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
-import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
 import br.com.samuel.barbershopapplication.utils.formatCurrency
 import kotlin.system.exitProcess
@@ -508,7 +508,7 @@ private fun HomeScreenPreview() {
     apiServiceServiceMock,
     apiSpecialtyServiceMock
   )
-  BarbershopApplicationTheme {
+  AppTheme {
     HomeScreen(homeViewModel, navController)
   }
 }

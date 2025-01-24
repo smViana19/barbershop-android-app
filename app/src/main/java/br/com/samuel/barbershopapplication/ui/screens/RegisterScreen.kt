@@ -46,7 +46,7 @@ import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiUserServiceMock
 import br.com.samuel.barbershopapplication.ui.components.AppLoading
 import br.com.samuel.barbershopapplication.ui.dialogs.CustomDialog
-import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.RegisterViewModel
 
 @Composable
@@ -229,7 +229,7 @@ private fun RegisterScreenPreview() {
   val apiUserServiceMock = ApiUserServiceMock()
   val registerViewModel = RegisterViewModel(apiUserServiceMock)
   val navController = rememberNavController()
-  BarbershopApplicationTheme {
+  AppTheme {
     RegisterScreen(registerViewModel, navController)
   }
 }

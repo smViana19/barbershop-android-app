@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
-import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 import br.com.samuel.barbershopapplication.ui.theme.LightOnSecondary
 import br.com.samuel.barbershopapplication.ui.theme.LightPrimary
 import br.com.samuel.barbershopapplication.ui.theme.LightPrimaryVariant
@@ -308,7 +308,7 @@ fun AppBottomSheet(
 @Preview(showBackground = true)
 @Composable
 private fun AppBottomSheetSPreview() {
-  BarbershopApplicationTheme {
+  AppTheme {
 
 //    AppBottomSheetS()
 //    AppBottomSheet(onDismiss = {})

@@ -27,6 +27,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -56,7 +57,7 @@ import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.ui.components.AppBottomSheet
 import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
-import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
+import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.ScheduleViewModel
 import br.com.samuel.barbershopapplication.utils.formatTime
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -184,7 +185,7 @@ fun ScheduleScreen(
     AvailableTimesList(
       availabilities = availabilities,
       navController = navController,
-      userId = userId, //TODO: SO PRA TESTE
+      userId = userId,
       serviceId = serviceId,
       professionalId = professionalIdToAllComponents,
       onClick = { availabilityId ->
@@ -362,7 +363,7 @@ private fun ScheduleScreenPreview() {
       apiServiceServiceMock
     )
 
-  BarbershopApplicationTheme {
+  AppTheme {
     ScheduleScreen(
       selectedDate,
       serviceId,
