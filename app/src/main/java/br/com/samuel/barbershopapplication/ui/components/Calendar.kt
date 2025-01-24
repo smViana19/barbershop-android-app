@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +50,11 @@ fun Calendar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WeekCalendar(currentSelectedDate: LocalDate, scheduleViewModel: ScheduleViewModel) {
+fun WeekCalendar(
+  currentSelectedDate: LocalDate,
+  scheduleViewModel: ScheduleViewModel,
+  onMonthChange: (YearMonth) -> Unit
+) {
   val currentDate = remember { currentSelectedDate }
   val currentMonth = remember { YearMonth.now() }
   val startDate = remember { currentMonth.minusMonths(1).atStartOfMonth() }
@@ -62,6 +67,14 @@ fun WeekCalendar(currentSelectedDate: LocalDate, scheduleViewModel: ScheduleView
     firstVisibleWeekDate = currentDate,
     firstDayOfWeek = daysOfWeek.first()
   )
+
+  val visibleMonth = remember(state.firstVisibleWeek) {
+    YearMonth.from(state.firstVisibleWeek.days.first().date)
+  }
+  LaunchedEffect(visibleMonth) {
+    onMonthChange(visibleMonth)
+  }
+
   var selectedDate by remember { mutableStateOf(currentSelectedDate) }
   DaysOfWeekTitle(daysOfWeek = daysOfWeek)
   WeekCalendar(
@@ -72,8 +85,6 @@ fun WeekCalendar(currentSelectedDate: LocalDate, scheduleViewModel: ScheduleView
         selectedDate = selectedDate,
         onClick = { clickableDate ->
           selectedDate = clickableDate
-          println("dia selecionado: $clickableDate")
-          println("selectedDate: $selectedDate")
           scheduleViewModel.selectDate(selectedDate.toString())
         })
     }
@@ -173,7 +184,7 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
         text = dayOfWeek.getDisplayName(
           TextStyle.SHORT,
           Locale("pt", "BR")
-        ), //TODO MUDAR QUANDO CRIAR MINHA LIB DE CONVERSOR DE DATA
+        ), //TODO MUDAR QUANDO FOR ADICIONAR MAIS LINGUAGENS NO APP
       )
     }
   }

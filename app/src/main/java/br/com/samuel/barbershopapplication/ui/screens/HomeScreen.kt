@@ -2,6 +2,7 @@ package br.com.samuel.barbershopapplication.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,30 +19,33 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -53,13 +57,11 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServ
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
-import br.com.samuel.barbershopapplication.ui.components.AppButton
 import br.com.samuel.barbershopapplication.ui.components.ListSkeletonLoader
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.HomeViewModel
 import br.com.samuel.barbershopapplication.utils.formatCurrency
-import kotlinx.coroutines.delay
 import kotlin.system.exitProcess
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,6 +74,7 @@ fun HomeScreen(
   val servicesData = homeViewModel.serviceData
   val professionals = homeViewModel.professionals
   val specialties = homeViewModel.specialties
+  val focusManager = LocalFocusManager.current
   val tabs = listOf("Serviços", "Profissionais", "Especializações", "Detalhes")
   var selectedTabIndex by remember { mutableIntStateOf(0) }
   LaunchedEffect(selectedTabIndex) {
@@ -106,7 +109,13 @@ fun HomeScreen(
   }
 
   Column(
-    modifier = Modifier.fillMaxSize()
+    modifier = Modifier
+      .fillMaxSize()
+      .pointerInput(Unit) {
+        detectTapGestures {
+          focusManager.clearFocus()
+        }
+      }
   ) {
     Row(
       modifier = Modifier
