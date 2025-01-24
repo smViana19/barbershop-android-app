@@ -9,7 +9,7 @@ class ApiAvailabilityServiceMock: ApiAvailabilityService {
     TODO("Not yet implemented")
   }
 
-  override suspend fun getAvailabilityById(availabilityId: Int): Response<List<ApiAvailabilityResponse>> {
+  override suspend fun getAvailabilityById(availabilityId: Int): ApiAvailabilityResponse {
     TODO("Not yet implemented")
   }
 

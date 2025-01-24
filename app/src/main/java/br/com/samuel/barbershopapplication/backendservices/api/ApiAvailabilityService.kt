@@ -10,7 +10,7 @@ interface ApiAvailabilityService {
     @GET("/availabilities")
     suspend fun getAllAvailabilites(): Response<List<ApiAvailabilityResponse>>
     @GET("/availabilities/{availabilityId}")
-    suspend fun getAvailabilityById(@Path("availabilityId") availabilityId: Int): Response<List<ApiAvailabilityResponse>>
+    suspend fun getAvailabilityById(@Path("availabilityId") availabilityId: Int): ApiAvailabilityResponse
 
     @GET("/availabilities/professional/{professionalId}")
     suspend fun getAvailabilitiesByProfessionalId(@Path("professionalId") professionalId: Int): List<ApiAvailabilityResponse>
