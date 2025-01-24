@@ -295,6 +295,7 @@ fun AppBottomSheet(
           availabilityId,
           details = scheduleViewModel.details.value
         )
+        navController.navigate(NavigationScreens.APPOINTMENT_SCREEN.name)
         onDismiss()
       },
       shape = RoundedCornerShape(8.dp)

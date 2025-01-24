@@ -8,9 +8,9 @@ data class ApiAvailabilityResponse(
     @SerializedName("professionalId")
     var professionalId: Int,
     @SerializedName("date")
-    var date: String, //LocalDate
+    var date: String,
     @SerializedName("time")
-    var time: String, // LocalTime
+    var time: String,
     @SerializedName("isAvailable")
     var isAvailable: Boolean
 )
