@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import br.com.samuel.barbershopapplication.R
 
 val CustomFontFamily = FontFamily(
-    Font(R.font.poppins_regular, FontWeight.Normal)
+    Font(R.font.inter, FontWeight.Normal)
 )
 
 // Set of Material typography styles to start with
