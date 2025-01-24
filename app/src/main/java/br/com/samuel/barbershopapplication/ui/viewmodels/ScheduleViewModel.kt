@@ -35,8 +35,14 @@ class ScheduleViewModel @Inject constructor(
   private val _servicePrice = mutableDoubleStateOf(0.0)
   val servicePrice: MutableState<Double> = _servicePrice
 
+  private val _details = mutableStateOf("")
+  val details: MutableState<String> = _details
+
   private val _professionals = mutableStateOf<List<ApiProfessionalResponse>>(emptyList())
   val professionals: MutableState<List<ApiProfessionalResponse>> = _professionals
+
+  private val _availabilityTime = mutableStateOf("")
+  val availabilityTime: MutableState<String> = _availabilityTime
 
   val filteredAvailabilities = MutableStateFlow<List<ApiAvailabilityResponse>>(emptyList())
   private val _availabilities = mutableStateOf<List<ApiAvailabilityResponse>>(emptyList())
@@ -50,11 +56,15 @@ class ScheduleViewModel @Inject constructor(
     details: String?
   ) {
     viewModelScope.launch {
-      val apiAppointmentRequest =
-        ApiAppointmentRequest(userId, professionalId, serviceId, availabilityId, details)
       try {
-        val response = apiAppointmentService.createAppointment(apiAppointmentRequest)
-
+        val apiAppointmentRequest = ApiAppointmentRequest(
+          userId,
+          professionalId,
+          serviceId,
+          availabilityId,
+          details
+        )
+        apiAppointmentService.createAppointment(apiAppointmentRequest)
       } catch (e: Exception) {
         e.printStackTrace()
       }
@@ -90,10 +100,21 @@ class ScheduleViewModel @Inject constructor(
   }
 
   fun getProfessionalById(professionalId: Int) {
-    viewModelScope.launch{
+    viewModelScope.launch {
       try {
         val professional = apiProfessionalService.getProfessionalById(professionalId)
         _professionalName.value = professional.user.name
+      } catch (e: Exception) {
+        e.printStackTrace()
+      }
+    }
+  }
+
+  fun getAvailabilityById(availabilityId: Int) {
+    viewModelScope.launch {
+      try {
+        val availability = apiAvailabilityService.getAvailabilityById(availabilityId)
+        _availabilityTime.value = availability.time
       } catch (e: Exception) {
         e.printStackTrace()
       }

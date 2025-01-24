@@ -58,6 +58,7 @@ import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.viewmodels.ScheduleViewModel
+import br.com.samuel.barbershopapplication.utils.formatTime
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -93,9 +94,8 @@ fun ScheduleScreen(
     firstVisibleWeekDate = currentDate,
     firstDayOfWeek = daysOfWeek.first()
   )
-  val visibleMonth = remember(state.firstVisibleWeek) {
-    YearMonth.from(state.firstVisibleWeek.days.first().date)
-  }
+
+  var visibleMonth by remember { mutableStateOf(YearMonth.now()) }
   val parsedDate = remember {
     if (selectedDate.isNotEmpty()) {
       LocalDate.parse(selectedDate)
@@ -103,7 +103,7 @@ fun ScheduleScreen(
       LocalDate.now()
     }
   }
-  var currentSelectedDate by remember { mutableStateOf(parsedDate) }
+  val currentSelectedDate by remember { mutableStateOf(parsedDate) }
 
   LaunchedEffect(Unit) {
     scheduleViewModel.getAllProfessionals()
@@ -141,7 +141,7 @@ fun ScheduleScreen(
       Text(
         text = visibleMonth.month.getDisplayName(
           TextStyle.FULL,
-          Locale.getDefault()
+          Locale("pt", "BR") //TODO: MUDAR QUANDO FOR COLOCAR PARA SELECIONAR LINGUAGEM
         ) + " " + visibleMonth.year
       )
       IconButton(onClick = {
@@ -154,7 +154,10 @@ fun ScheduleScreen(
     }
     WeekCalendar(
       currentSelectedDate = currentSelectedDate,
-      scheduleViewModel = scheduleViewModel
+      scheduleViewModel = scheduleViewModel,
+      onMonthChange = { newMonth ->
+        visibleMonth = newMonth
+      }
     )
 
     Column(modifier = Modifier.padding(top = 16.dp)) {
@@ -276,58 +279,61 @@ fun AvailableTimesList(
             .padding(8.dp)
             .clickable {
               onClick(availableTime.id)
+              scheduleViewModel.getAvailabilityById(availabilityId)
               showBottomSheet = true
             }
         ) {
-          Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-              .fillMaxSize()
-              .padding(16.dp)
-          ) {
-            Text(
-              text = availableTime.time,
-              color = Color.Black
-            )
-          }
-          Box(
-            modifier = Modifier
-              .fillMaxSize()
-              .padding(16.dp)
-          ) {
-            if (showBottomSheet) {
-              ModalBottomSheet(
-                onDismissRequest = {
-                  showBottomSheet = false
-                },
-                sheetState = sheetState,
-                containerColor = Color.White,
-                dragHandle = {
-                  Spacer(
-                    modifier = Modifier
-                      .padding(bottom = 24.dp, top = 8.dp)
-                      .height(3.dp)
-                      .width(38.dp)
-                      .clip(CircleShape)
-                      .background(Color(0xFFE0E0E0))
-                  )
-                },
-              ) {
-                AppBottomSheet(
-                  onDismiss = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                      if (!sheetState.isVisible) {
-                        showBottomSheet = false
-                      }
-                    }
+          if(!availableTime.isAvailable) {
+            Box(
+              contentAlignment = Alignment.Center,
+              modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+            ) {
+              Text(
+                text = formatTime(availableTime.time),
+                color = Color.Black
+              )
+            }
+            Box(
+              modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+            ) {
+              if (showBottomSheet) {
+                ModalBottomSheet(
+                  onDismissRequest = {
+                    showBottomSheet = false
                   },
-                  navController = navController,
-                  userId = userId,
-                  serviceId = serviceId,
-                  professionalId = professionalId,
-                  availabilityId = availabilityId,
-                  scheduleViewModel = scheduleViewModel
-                )
+                  sheetState = sheetState,
+                  containerColor = Color.White,
+                  dragHandle = {
+                    Spacer(
+                      modifier = Modifier
+                        .padding(bottom = 24.dp, top = 8.dp)
+                        .height(3.dp)
+                        .width(38.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFE0E0E0))
+                    )
+                  },
+                ) {
+                  AppBottomSheet(
+                    onDismiss = {
+                      scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                          showBottomSheet = false
+                        }
+                      }
+                    },
+                    navController = navController,
+                    userId = userId,
+                    serviceId = serviceId,
+                    professionalId = professionalId,
+                    availabilityId = availabilityId,
+                    scheduleViewModel = scheduleViewModel
+                  )
+                }
               }
             }
           }
@@ -349,7 +355,12 @@ private fun ScheduleScreenPreview() {
   val apiProfessionalServiceMock = ApiProfessionalServiceMock()
   val apiServiceServiceMock = ApiServiceServiceMock()
   val scheduleViewmodel =
-    ScheduleViewModel(apiAvailabilityServiceMock, apiProfessionalServiceMock, apiAppointmentService, apiServiceServiceMock)
+    ScheduleViewModel(
+      apiAvailabilityServiceMock,
+      apiProfessionalServiceMock,
+      apiAppointmentService,
+      apiServiceServiceMock
+    )
 
   BarbershopApplicationTheme {
     ScheduleScreen(
