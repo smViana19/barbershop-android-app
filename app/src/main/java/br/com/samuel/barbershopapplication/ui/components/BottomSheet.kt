@@ -2,41 +2,32 @@ package br.com.samuel.barbershopapplication.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,9 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.samuel.barbershopapplication.R
-import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
-import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
-import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.BarbershopApplicationTheme
 import br.com.samuel.barbershopapplication.ui.theme.LightOnSecondary
@@ -55,11 +43,9 @@ import br.com.samuel.barbershopapplication.ui.theme.LightPrimary
 import br.com.samuel.barbershopapplication.ui.theme.LightPrimaryVariant
 import br.com.samuel.barbershopapplication.ui.viewmodels.ScheduleViewModel
 import br.com.samuel.barbershopapplication.utils.formatCurrency
-import kotlinx.coroutines.launch
 
 @Composable
 fun AppBottomSheet(
-  modifier: Modifier = Modifier,
   onDismiss: () -> Unit,
   navController: NavController,
   userId: Int,
@@ -67,12 +53,17 @@ fun AppBottomSheet(
   serviceId: Int,
   availabilityId: Int,
   scheduleViewModel: ScheduleViewModel
-  //TODO: data selecionada
 ) {
+  val focusManager = LocalFocusManager.current
   Column(
     modifier = Modifier
       .fillMaxWidth()
-      .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+      .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
+      .pointerInput(Unit) {
+        detectTapGestures {
+          focusManager.clearFocus()
+        }
+      },
   ) {
     Row(
       modifier = Modifier
@@ -166,7 +157,6 @@ fun AppBottomSheet(
               verticalAlignment = Alignment.CenterVertically
             ) {
               Box(
-                //TODO: COLOCAR A IMAGEM DO PROFISSIONAL
                 modifier = Modifier
                   .size(20.dp)
                   .clip(CircleShape)
@@ -189,7 +179,6 @@ fun AppBottomSheet(
               horizontalArrangement = Arrangement.SpaceBetween
             ) {
               Text(
-//                text = "R$ ${service?.price?.formatCurrency()}",
                 text = "R$ ${scheduleViewModel.servicePrice.value.formatCurrency()}",
                 style = TextStyle(
                   fontSize = 12.sp,
@@ -197,14 +186,14 @@ fun AppBottomSheet(
                   color = Color(LightPrimaryVariant.value)
                 )
               )
-              Text(
-                text = "20:00 - 20:30", //TODO: AJUSTAR NO BACKEND
-                style = TextStyle(
-                  fontSize = 12.sp,
-                  lineHeight = 24.sp,
-                  color = Color.Black
-                )
-              )
+//              Text(
+//                text = scheduleViewModel.availabilityTime.value, //TODO: AJUSTAR NO BACKEND
+//                style = TextStyle(
+//                  fontSize = 12.sp,
+//                  lineHeight = 24.sp,
+//                  color = Color.Black
+//                )
+//              )
             }
 
           }
@@ -276,8 +265,10 @@ fun AppBottomSheet(
           modifier = Modifier
             .fillMaxWidth()
             .padding(top = 4.dp),
-          value = "",
-          onValueChange = {},
+          value = scheduleViewModel.details.value,
+          onValueChange = { newValue ->
+            scheduleViewModel.details.value = newValue
+          },
           placeholder = {
             Text(
               text = "Ex: Nao precisa lavar",
@@ -285,7 +276,12 @@ fun AppBottomSheet(
                 color = Color.Gray
               )
             )
-          }
+          },
+          colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            disabledContainerColor = Color.White
+          ),
         )
       }
     }
@@ -297,7 +293,7 @@ fun AppBottomSheet(
           professionalId,
           serviceId,
           availabilityId,
-          details = ""
+          details = scheduleViewModel.details.value
         )
         onDismiss()
       },
