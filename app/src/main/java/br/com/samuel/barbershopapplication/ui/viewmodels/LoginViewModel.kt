@@ -64,7 +64,7 @@ class LoginViewModel @Inject constructor(
           if (token != null && userId != null) {
             sharedPrefsService.saveAuthToken(token)
             sharedPrefsService.saveUserData(userId, name, email)
-            navController.navigate(NavigationScreens.HOME_SCREEN.name)
+            navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
           } else {
             _error.value = "Erro ao salvar informações do usuário"
           }

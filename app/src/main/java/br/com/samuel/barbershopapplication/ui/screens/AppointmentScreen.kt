@@ -57,7 +57,7 @@ fun AppointmentScreen(
         },
         navigationIcon = {
           IconButton(onClick = {
-            navController.navigate(NavigationScreens.HOME_SCREEN.name)
+            navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
           }) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
           }

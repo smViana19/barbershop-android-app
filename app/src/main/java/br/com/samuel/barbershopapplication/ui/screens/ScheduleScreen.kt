@@ -27,7 +27,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -134,7 +133,7 @@ fun ScheduleScreen(
     ) {
       IconButton(
         onClick = {
-          navController.navigate(NavigationScreens.HOME_SCREEN.name)
+          navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
         },
       ) {
         Icon(painter = painterResource(R.drawable.ic_back_24), contentDescription = "back")

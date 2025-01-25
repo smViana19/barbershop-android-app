@@ -218,7 +218,7 @@ fun AppBottomSheet(
                 )
               )
               .clickable() {
-                navController.navigate(NavigationScreens.HOME_SCREEN.name)
+                navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
               }
               .background(Color(LightPrimary.value))
               .padding(horizontal = 8.dp, vertical = 4.dp)
