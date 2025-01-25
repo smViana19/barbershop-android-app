@@ -37,13 +37,17 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.ui.components.AppButton
 import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+  navController: NavController
+) {
   val focusManager = LocalFocusManager.current
 
   Scaffold(
@@ -192,7 +196,8 @@ fun ProfileScreen() {
 @Preview(showBackground = true)
 @Composable
 private fun ProfileScreenPreview() {
+  val navController = rememberNavController()
   AppTheme {
-    ProfileScreen()
+    ProfileScreen(navController)
   }
 }
