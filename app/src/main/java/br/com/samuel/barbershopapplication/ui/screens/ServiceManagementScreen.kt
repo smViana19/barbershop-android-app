@@ -13,22 +13,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +62,7 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServ
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
+import br.com.samuel.barbershopapplication.ui.components.AppButton
 import br.com.samuel.barbershopapplication.ui.components.ListSkeletonLoader
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.AppTheme
@@ -107,74 +113,73 @@ fun ServiceManagementScreen(
       }
     )
   }
-
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .pointerInput(Unit) {
-        detectTapGestures {
-          focusManager.clearFocus()
-        }
-      }
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .statusBarsPadding(),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      IconButton(onClick = { /*TODO VOLTAR NAVIGATION*/ }) {
-        Icon(
-          painter = painterResource(R.drawable.ic_back_24),
-          contentDescription = "Back"
-        )
-      }
-      Text(
-        text = "BarberShop",
+  Scaffold(
+    topBar = {
+      CenterAlignedTopAppBar(
+        title = {
+          Text(text = "Barbearia")
+        },
+        navigationIcon = {
+          IconButton(onClick = {
+            navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
+          }) {
+            Icon(Icons.Filled.ArrowBack, "backIcon")
+          }
+        },
+        colors = topAppBarColors(
+          containerColor = Color(0xFF0F172A),
+          scrolledContainerColor = MaterialTheme.colorScheme.primary,
+          navigationIconContentColor = Color.White,
+          titleContentColor = Color.White,
+          actionIconContentColor = Color.White
+        ),
       )
-      IconButton(onClick = {/*TODO TELA DE MAPA*/ }) {
-        Icon(
-          painter = painterResource(R.drawable.ic_location_24),
-          contentDescription = "Back"
-        )
-      }
-    }
-    Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.Center
-
-    ) {
-      ScrollableTabRow(
-        selectedTabIndex = selectedTabIndex,
-        edgePadding = 16.dp,
-        containerColor = Color.Transparent,
-        contentColor = Color(0xFF3B3B3B),
-
+    },
+    content = {
+      Column(
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(it)
+          .pointerInput(Unit) {
+            detectTapGestures {
+              focusManager.clearFocus()
+            }
+          }
+          .background(Color.White)
+      ) {
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.Center
         ) {
-        tabs.forEachIndexed { index, title ->
-          Tab(selected = selectedTabIndex == index,
-            onClick = { selectedTabIndex = index },
-            text = { Text(text = title) }
-          )
+          ScrollableTabRow(
+            selectedTabIndex = selectedTabIndex,
+            edgePadding = 16.dp,
+            containerColor = Color.Transparent,
+            contentColor = Color(0xFF3B3B3B),
+          ) {
+            tabs.forEachIndexed { index, title ->
+              Tab(selected = selectedTabIndex == index,
+                onClick = { selectedTabIndex = index },
+                text = { Text(text = title) }
+              )
+            }
+          }
         }
-
-      }
-
-    }
-    Spacer(modifier = Modifier.padding(top = 16.dp))
-    if (serviceManagementViewModel.isLoading.value) {
-      ListSkeletonLoader()
-    }
-    Column(modifier = Modifier.padding()) {
-      when (selectedTabIndex) {
-        0 -> ServicesTab(services = servicesData.value, navController = navController)
-        1 -> ProfessionalsTab(professionals = professionals.value)
-        2 -> SpecialtiesTab(specialties = specialties.value)
+        Spacer(modifier = Modifier.padding(top = 16.dp))
+        if (serviceManagementViewModel.isLoading.value) {
+          ListSkeletonLoader()
+        }
+        Column(modifier = Modifier.padding()) {
+          when (selectedTabIndex) {
+            0 -> ServicesTab(services = servicesData.value, navController = navController)
+            1 -> ProfessionalsTab(professionals = professionals.value)
+            2 -> SpecialtiesTab(specialties = specialties.value)
+          }
+        }
       }
     }
+  )
 
-  }
 }
 
 @Composable
@@ -191,6 +196,7 @@ fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController
       modifier = Modifier.fillMaxWidth(),
       value = "",
       onValueChange = {},
+      shape = RoundedCornerShape(8.dp),
       label = { Text(text = "Pesquisar serviço") },
       leadingIcon = {
         Icon(
@@ -257,19 +263,17 @@ fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
           ) {
-            Button(
-              modifier = Modifier,
-              shape = RoundedCornerShape(4.dp),
-              contentPadding = PaddingValues(4.dp),
+            AppButton(
               onClick = {
-                println("navegando...")
-                println("id do service: ${service.id}")
                 navController.navigate("${NavigationScreens.SCHEDULE_SCREEN.name}?serviceId=${service.id}")
-              }) {
-              Text(
-                text = "Agendar",
-              )
-            }
+              },
+              text = "Agendar",
+              contentPadding = PaddingValues(horizontal = 16.dp),
+              shape = RoundedCornerShape(8.dp),
+              trailingIcon = {
+                Icon(painter = painterResource(R.drawable.ic_add_24), contentDescription = "")
+              }
+            )
           }
         }
       }
@@ -294,6 +298,7 @@ fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
       modifier = Modifier.fillMaxWidth(),
       value = "",
       onValueChange = {},
+      shape = RoundedCornerShape(8.dp),
       label = { Text(text = "Pesquisar") },
       leadingIcon = {
         Icon(
@@ -367,15 +372,12 @@ fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
               modifier = Modifier.fillMaxWidth(),
               horizontalArrangement = Arrangement.End
             ) {
-              Button(
-                modifier = Modifier,
+              AppButton(
                 shape = RoundedCornerShape(4.dp),
                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
-                onClick = {}) {
-                Text(
-                  text = "Ver mais",
-                )
-              }
+                text = "Veja mais",
+                onClick = {}
+              )
             }
           }
         }
@@ -399,7 +401,8 @@ fun SpecialtiesTab(specialties: List<ApiSpecialtyResponse>) {
       modifier = Modifier.fillMaxWidth(),
       value = "",
       onValueChange = {},
-      label = { Text(text = "Pesquisar") },
+      shape = RoundedCornerShape(8.dp),
+      label = { Text(text = "Pesquisar especialidade") },
       leadingIcon = {
         Icon(
           painter = painterResource(R.drawable.ic_search_24),
@@ -472,15 +475,12 @@ fun SpecialtiesTab(specialties: List<ApiSpecialtyResponse>) {
               modifier = Modifier.fillMaxWidth(),
               horizontalArrangement = Arrangement.End
             ) {
-              Button(
-                modifier = Modifier,
+              AppButton(
                 shape = RoundedCornerShape(4.dp),
                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
-                onClick = {}) {
-                Text(
-                  text = "Ver mais",
-                )
-              }
+                text = "Veja mais",
+                onClick = {}
+              )
             }
           }
         }

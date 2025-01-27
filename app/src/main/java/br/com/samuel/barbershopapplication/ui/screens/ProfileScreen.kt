@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.samuel.barbershopapplication.R
 import br.com.samuel.barbershopapplication.ui.components.AppButton
+import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,8 +64,10 @@ fun ProfileScreen(
           Text(text = "Meu perfil")
         },
         navigationIcon = {
-          IconButton(onClick = {}) {
-            Icon(Icons.Filled.ArrowBack, "backIcon")
+          IconButton(onClick = {
+            navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
+          }) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
           }
         },
         colors = topAppBarColors(
