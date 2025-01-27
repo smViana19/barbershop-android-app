@@ -143,7 +143,7 @@ fun ListSkeletonLoader() {
   Column(modifier = Modifier
     .fillMaxSize()
     .padding(16.dp)) {
-    repeat(10) {
+    repeat(20) {
       Row(
         modifier = Modifier
           .fillMaxWidth()

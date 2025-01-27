@@ -176,7 +176,8 @@ private fun AppButtonIconPreview() {
     AppButton(
       onClick = {},
       icon = {
-        Icon(Icons.Default.Star, contentDescription = "Favorito") },
+        Icon(Icons.Default.Star, contentDescription = "Favorito")
+      },
     )
   }
 }
