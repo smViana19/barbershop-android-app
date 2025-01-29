@@ -18,9 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -36,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +60,6 @@ import br.com.samuel.barbershopapplication.backendservices.mocks.ApiServiceServi
 import br.com.samuel.barbershopapplication.backendservices.mocks.ApiSpecialtyServiceMock
 import br.com.samuel.barbershopapplication.backendservices.mocks.SharedPrefsServiceMock
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
-import br.com.samuel.barbershopapplication.model.ApiServiceResponse
 import br.com.samuel.barbershopapplication.model.ApiSpecialtyResponse
 import br.com.samuel.barbershopapplication.ui.components.AppButton
 import br.com.samuel.barbershopapplication.ui.components.ListSkeletonLoader
@@ -77,7 +76,6 @@ fun ServiceManagementScreen(
   navController: NavController
 ) {
   var showExitDialog by remember { mutableStateOf(false) }
-  val servicesData = serviceManagementViewModel.serviceData
   val professionals = serviceManagementViewModel.professionals
   val specialties = serviceManagementViewModel.specialties
   val focusManager = LocalFocusManager.current
@@ -123,7 +121,7 @@ fun ServiceManagementScreen(
           IconButton(onClick = {
             navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
           }) {
-            Icon(Icons.Filled.ArrowBack, "backIcon")
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
           }
         },
         colors = topAppBarColors(
@@ -171,9 +169,13 @@ fun ServiceManagementScreen(
         }
         Column(modifier = Modifier.padding()) {
           when (selectedTabIndex) {
-            0 -> ServicesTab(services = servicesData.value, navController = navController)
-            1 -> ProfessionalsTab(professionals = professionals.value)
-            2 -> SpecialtiesTab(specialties = specialties.value)
+            0 -> ServicesTab(
+              serviceManagementViewModel = serviceManagementViewModel,
+              navController = navController
+            )
+
+            1 -> ProfessionalsTab(serviceManagementViewModel = serviceManagementViewModel)
+            2 -> SpecialtiesTab(serviceManagementViewModel = serviceManagementViewModel)
           }
         }
       }
@@ -183,8 +185,14 @@ fun ServiceManagementScreen(
 }
 
 @Composable
-fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController) {
-
+fun ServicesTab(
+  serviceManagementViewModel: ServiceManagementViewModel,
+  navController: NavController
+) {
+  var searchText by remember {
+    mutableStateOf("")
+  }
+  val services by serviceManagementViewModel.filteredService.collectAsState()
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -194,8 +202,12 @@ fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController
   ) {
     OutlinedTextField(
       modifier = Modifier.fillMaxWidth(),
-      value = "",
-      onValueChange = {},
+      value = searchText,
+      onValueChange = { newText ->
+        searchText = newText
+        serviceManagementViewModel.filterService(searchText)
+      },
+      singleLine = true,
       shape = RoundedCornerShape(8.dp),
       label = { Text(text = "Pesquisar serviço") },
       leadingIcon = {
@@ -287,7 +299,11 @@ fun ServicesTab(services: List<ApiServiceResponse>, navController: NavController
 }
 
 @Composable
-fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
+fun ProfessionalsTab(serviceManagementViewModel: ServiceManagementViewModel) {
+  var searchText by remember {
+    mutableStateOf("")
+  }
+  val professionals by serviceManagementViewModel.filteredProfessional.collectAsState()
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -296,8 +312,12 @@ fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
   ) {
     OutlinedTextField(
       modifier = Modifier.fillMaxWidth(),
-      value = "",
-      onValueChange = {},
+      value = searchText,
+      onValueChange = { newText ->
+        searchText = newText
+        serviceManagementViewModel.filterProfessional(searchText)
+      },
+      singleLine = true,
       shape = RoundedCornerShape(8.dp),
       label = { Text(text = "Pesquisar") },
       leadingIcon = {
@@ -390,7 +410,11 @@ fun ProfessionalsTab(professionals: List<ApiProfessionalResponse>) {
 }
 
 @Composable
-fun SpecialtiesTab(specialties: List<ApiSpecialtyResponse>) {
+fun SpecialtiesTab(serviceManagementViewModel: ServiceManagementViewModel) {
+  var searchText by remember {
+    mutableStateOf("")
+  }
+  val specialties by serviceManagementViewModel.filteredSpecialties.collectAsState()
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -399,8 +423,12 @@ fun SpecialtiesTab(specialties: List<ApiSpecialtyResponse>) {
   ) {
     OutlinedTextField(
       modifier = Modifier.fillMaxWidth(),
-      value = "",
-      onValueChange = {},
+      value = searchText,
+      onValueChange = {newText ->
+        searchText = newText
+        serviceManagementViewModel.filterSpecialty(searchText)
+      },
+      singleLine = true,
       shape = RoundedCornerShape(8.dp),
       label = { Text(text = "Pesquisar especialidade") },
       leadingIcon = {
