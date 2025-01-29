@@ -1,5 +1,10 @@
 package br.com.samuel.barbershopapplication.ui.navigation
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -65,6 +70,7 @@ fun MainNavigation() {
           navController = navController,
           items = bottomNavItems
         )
+
         else -> {}
       }
     },
@@ -74,7 +80,27 @@ fun MainNavigation() {
         startDestination = NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name,
         modifier = Modifier.padding(innerPadding)
       ) {
-        composable(route = NavigationScreens.REGISTER_SCREEN.name) {
+        composable(
+          route = NavigationScreens.REGISTER_SCREEN.name,
+          enterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Left,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(500))
+          },
+          exitTransition = {
+            slideOutOfContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeOut(animationSpec = tween(500))
+          },
+          popEnterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(500))
+          }
+        ) {
           RegisterScreen(registerViewModel, navController)
         }
 
@@ -82,10 +108,29 @@ fun MainNavigation() {
           LoginScreen(loginViewModel, navController)
         }
 
-        composable(route = NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name) {
+        composable(
+          route = NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name,
+          enterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(300))
+          },
+          exitTransition = {
+            slideOutOfContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Left,
+              animationSpec = tween(500)
+            ) + fadeOut(animationSpec = tween(300))
+          },
+          popEnterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(300))
+          }
+        ) {
           ServiceManagementScreen(serviceManagementViewModel, navController)
         }
-
         composable(
           route = "${NavigationScreens.SCHEDULE_SCREEN.name}?selectedDate={selectedDate}&serviceId={serviceId}",
           arguments = listOf(
@@ -96,21 +141,84 @@ fun MainNavigation() {
             navArgument("serviceId") {
               type = NavType.IntType
               defaultValue = -1
-            })
+            }),
+          enterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Left,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(500))
+          },
+          exitTransition = {
+            slideOutOfContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeOut(animationSpec = tween(500))
+          },
+          popEnterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(500))
+          }
         ) { backStackEntry ->
           val selectedDate = backStackEntry.arguments?.getString("selectedDate") ?: ""
           val serviceId = backStackEntry.arguments?.getInt("serviceId") ?: -1
           ScheduleScreen(selectedDate, serviceId, navController, sharedPrefsService)
         }
 
-        composable(route = NavigationScreens.CALENDAR_SCREEN.name) {
+        composable(
+          route = NavigationScreens.CALENDAR_SCREEN.name,
+          enterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Down,
+              animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+          },) {
           CalendarScreen(navController)
         }
 
-        composable(route = NavigationScreens.APPOINTMENT_SCREEN.name) {
+        composable(
+          route = NavigationScreens.APPOINTMENT_SCREEN.name,
+          enterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Left,
+              animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+          },
+          exitTransition = {
+            slideOutOfContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
+          },
+          popEnterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(500))
+          }) {
           AppointmentScreen(appointmentViewModel, navController)
         }
-        composable(route = NavigationScreens.PROFILE_SCREEN.name) {
+        composable(
+          route = NavigationScreens.PROFILE_SCREEN.name,
+          enterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Left,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(500))
+          },
+          exitTransition = {
+            slideOutOfContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeOut(animationSpec = tween(500))
+          },
+          popEnterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            ) + fadeIn(animationSpec = tween(500))
+          }) {
           ProfileScreen(navController)
         }
 
