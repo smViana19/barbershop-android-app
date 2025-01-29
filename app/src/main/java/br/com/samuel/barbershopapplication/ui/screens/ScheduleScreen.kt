@@ -22,13 +22,20 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
@@ -54,6 +61,7 @@ import br.com.samuel.barbershopapplication.backendservices.sharedprefs.SharedPre
 import br.com.samuel.barbershopapplication.model.ApiAvailabilityResponse
 import br.com.samuel.barbershopapplication.model.ApiProfessionalResponse
 import br.com.samuel.barbershopapplication.ui.components.AppBottomSheet
+import br.com.samuel.barbershopapplication.ui.components.AppCustomTopAppBar
 import br.com.samuel.barbershopapplication.ui.components.WeekCalendar
 import br.com.samuel.barbershopapplication.ui.navigation.NavigationScreens
 import br.com.samuel.barbershopapplication.ui.theme.AppTheme
@@ -83,18 +91,6 @@ fun ScheduleScreen(
   var professionalIdToAllComponents by remember { mutableIntStateOf(-1) }
   var availabilityIdToAllComponents by remember { mutableIntStateOf(-1) }
   val availabilities by scheduleViewModel.filteredAvailabilities.collectAsState()
-  val currentDate = remember { LocalDate.now() }
-  val currentMonth = remember { YearMonth.now() }
-  val startDate = remember { currentMonth.minusMonths(1).atStartOfMonth() }
-  val endDate = remember { currentMonth.plusMonths(12).atEndOfMonth() }
-  val daysOfWeek = remember { daysOfWeek() }
-  val state = rememberWeekCalendarState(
-    startDate = startDate,
-    endDate = endDate,
-    firstVisibleWeekDate = currentDate,
-    firstDayOfWeek = daysOfWeek.first()
-  )
-
   var visibleMonth by remember { mutableStateOf(YearMonth.now()) }
   val parsedDate = remember {
     if (selectedDate.isNotEmpty()) {
@@ -105,96 +101,109 @@ fun ScheduleScreen(
   }
   val currentSelectedDate by remember { mutableStateOf(parsedDate) }
 
+  val monthTitle = visibleMonth.month.getDisplayName(
+    TextStyle.FULL,
+    Locale("pt", "BR") //TODO: MUDAR QUANDO FOR COLOCAR PARA SELECIONAR LINGUAGEM
+  ) + " " + visibleMonth.year
+
   LaunchedEffect(Unit) {
     scheduleViewModel.getAllProfessionals()
   }
   LaunchedEffect(selectedDate) {
     scheduleViewModel.filteredDate(selectedDate)
   }
-
   LaunchedEffect(professionalIdToAllComponents) {
     scheduleViewModel.getServiceById(serviceId)
     scheduleViewModel.getProfessionalById(professionalIdToAllComponents)
   }
 
-
-  Column(
-    horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-      .fillMaxSize()
-      .padding(top = 16.dp)
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .statusBarsPadding(),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      IconButton(
-        onClick = {
-          navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
+  Scaffold(
+    topBar = {
+      CenterAlignedTopAppBar(
+        title = {
+          Text(text = monthTitle)
         },
-      ) {
-        Icon(painter = painterResource(R.drawable.ic_back_24), contentDescription = "back")
-      }
-      Text(
-        text = visibleMonth.month.getDisplayName(
-          TextStyle.FULL,
-          Locale("pt", "BR") //TODO: MUDAR QUANDO FOR COLOCAR PARA SELECIONAR LINGUAGEM
-        ) + " " + visibleMonth.year
-      )
-      IconButton(onClick = {
-        navController.navigate(NavigationScreens.CALENDAR_SCREEN.name) {
-          launchSingleTop = true
-        }
-      }) {
-        Icon(painter = painterResource(R.drawable.ic_calendar_24), contentDescription = "calendar")
-      }
-    }
-    WeekCalendar(
-      currentSelectedDate = currentSelectedDate,
-      scheduleViewModel = scheduleViewModel,
-      onMonthChange = { newMonth ->
-        visibleMonth = newMonth
-      }
-    )
+        navigationIcon = {
+          IconButton(onClick = {
+            navController.navigate(NavigationScreens.SERVICE_MANAGEMENT_SCREEN.name)
+          }) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
+          }
 
-    Column(modifier = Modifier.padding(top = 16.dp)) {
-      Row(
+        },
+        actions = {
+          IconButton(onClick = {
+            navController.navigate(NavigationScreens.CALENDAR_SCREEN.name) {
+              launchSingleTop = true
+            }
+          }) {
+            Icon(
+              painter = painterResource(R.drawable.ic_calendar_24),
+              contentDescription = "calendar"
+            )
+          }
+        },
+        colors = topAppBarColors(
+          containerColor = Color(0xFF0F172A),
+          scrolledContainerColor = MaterialTheme.colorScheme.primary,
+          navigationIconContentColor = Color.White,
+          titleContentColor = Color.White,
+          actionIconContentColor = Color.White
+        ),
+      )
+    },
+    content = {
+      Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(bottom = 8.dp),
-        horizontalArrangement = Arrangement.Center
+          .fillMaxSize()
+          .padding(it)
       ) {
-        Text(
-          text = "Selecione o profissional",
-          fontSize = 18.sp,
+        WeekCalendar(
+          currentSelectedDate = currentSelectedDate,
+          scheduleViewModel = scheduleViewModel,
+          onMonthChange = { newMonth ->
+            visibleMonth = newMonth
+          }
+        )
+
+        Column(modifier = Modifier.padding(top = 16.dp)) {
+          Row(
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.Center
+          ) {
+            Text(
+              text = "Selecione o profissional",
+              fontSize = 18.sp,
+            )
+          }
+          ProfessionalList(
+            professionals = professionals.value,
+            onClick = { professionalId ->
+              scheduleViewModel.getAvailabilitiesByProfessionalId(professionalId)
+              professionalIdToAllComponents = professionalId
+            }
+          )
+          HorizontalDivider()
+        }
+        AvailableTimesList(
+          availabilities = availabilities,
+          navController = navController,
+          userId = userId,
+          serviceId = serviceId,
+          professionalId = professionalIdToAllComponents,
+          onClick = { availabilityId ->
+            availabilityIdToAllComponents = availabilityId
+          },
+          availabilityId = availabilityIdToAllComponents,
+          scheduleViewModel = scheduleViewModel
+
         )
       }
-      ProfessionalList(
-        professionals = professionals.value,
-        onClick = { professionalId ->
-          scheduleViewModel.getAvailabilitiesByProfessionalId(professionalId)
-          professionalIdToAllComponents = professionalId
-        }
-      )
-      HorizontalDivider()
     }
-    AvailableTimesList(
-      availabilities = availabilities,
-      navController = navController,
-      userId = userId,
-      serviceId = serviceId,
-      professionalId = professionalIdToAllComponents,
-      onClick = { availabilityId ->
-        availabilityIdToAllComponents = availabilityId
-      },
-      availabilityId = availabilityIdToAllComponents,
-      scheduleViewModel = scheduleViewModel
-
-    )
-  }
+  )
 }
 
 @Composable
@@ -283,7 +292,7 @@ fun AvailableTimesList(
               showBottomSheet = true
             }
         ) {
-          if(!availableTime.isAvailable) {
+          if (!availableTime.isAvailable) {
             Box(
               contentAlignment = Alignment.Center,
               modifier = Modifier

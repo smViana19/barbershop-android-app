@@ -175,7 +175,7 @@ fun DayMonth(
 
 @Composable
 fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
-  Row(modifier = Modifier.fillMaxWidth()) {
+  Row(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
     for (dayOfWeek in daysOfWeek) {
       Text(
         modifier = Modifier.weight(1f),

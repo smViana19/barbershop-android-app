@@ -144,21 +144,24 @@ fun MainNavigation() {
             }),
           enterTransition = {
             slideIntoContainer(
-              towards = AnimatedContentTransitionScope.SlideDirection.Left,
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
               animationSpec = tween(500)
-            ) + fadeIn(animationSpec = tween(500))
+            )
+//            + fadeIn(animationSpec = tween(500))
           },
           exitTransition = {
             slideOutOfContainer(
               towards = AnimatedContentTransitionScope.SlideDirection.Right,
               animationSpec = tween(500)
-            ) + fadeOut(animationSpec = tween(500))
+            )
+//            + fadeOut(animationSpec = tween(500))
           },
           popEnterTransition = {
             slideIntoContainer(
               towards = AnimatedContentTransitionScope.SlideDirection.Right,
               animationSpec = tween(500)
-            ) + fadeIn(animationSpec = tween(500))
+            )
+//            + fadeIn(animationSpec = tween(500))
           }
         ) { backStackEntry ->
           val selectedDate = backStackEntry.arguments?.getString("selectedDate") ?: ""
@@ -170,10 +173,25 @@ fun MainNavigation() {
           route = NavigationScreens.CALENDAR_SCREEN.name,
           enterTransition = {
             slideIntoContainer(
-              towards = AnimatedContentTransitionScope.SlideDirection.Down,
-              animationSpec = tween(300)
-            ) + fadeIn(animationSpec = tween(300))
-          },) {
+              towards = AnimatedContentTransitionScope.SlideDirection.Left,
+              animationSpec = tween(500)
+            )
+//            + fadeIn(animationSpec = tween(500))
+          },
+          exitTransition = {
+            slideOutOfContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            )
+//            + fadeOut(animationSpec = tween(500))
+          },
+          popEnterTransition = {
+            slideIntoContainer(
+              towards = AnimatedContentTransitionScope.SlideDirection.Right,
+              animationSpec = tween(500)
+            )
+//            + fadeIn(animationSpec = tween(500))
+          }) {
           CalendarScreen(navController)
         }
 

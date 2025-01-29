@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
  * Light Theme Colors
  */
 val LightPrimary = Color(0xFF4894FE) // Verde claro
-val LightPrimaryVariant = Color(0xFF357E59) // Verde escuro para destaque
+val LightPrimaryVariant = Color(0xFF0F172A) // Verde escuro para destaque
 val LightSecondary = Color(0xFFDAA520) // Dourado
 val LightBackground = Color(0xFFF3F6FB) // Cinza claro (fundo principal)
 val LightSurface = Color(0xFFFFFFFF) // Branco (fundo de cartões)
