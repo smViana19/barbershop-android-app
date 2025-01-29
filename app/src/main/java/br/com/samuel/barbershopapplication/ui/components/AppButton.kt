@@ -67,7 +67,7 @@ fun AppButton(
     colors
   } else {
     ButtonDefaults.buttonColors(
-      disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), // ou 0.9f dependendo do seu estilo
+      disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
       disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
     )
   }
